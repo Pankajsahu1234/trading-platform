@@ -1,0 +1,44 @@
+# Gitleaks configuration
+# Secrets scanning — prevents committing API keys, passwords, tokens
+
+title = "Timo Gitleaks Config"
+
+[extend]
+useDefault = true
+
+# Custom rules for project-specific secrets
+[[rules]]
+description = "Tron Private Key"
+id = "tron-private-key"
+regex = '''(?i)(tron.*private.*key|PRIVATE_KEY)\s*[=:]\s*['""]?([a-fA-F0-9]{64})['""]?'''
+tags = ["crypto", "tron"]
+
+[[rules]]
+description = "Database URL with password"
+id = "database-url"
+regex = '''mysql://[^:]+:[^@]+@'''
+tags = ["database"]
+
+[[rules]]
+description = "JWT Secret"
+id = "jwt-secret"
+regex = '''(?i)(jwt.*secret|JWT_SECRET)\s*[=:]\s*['""]?([a-zA-Z0-9+/]{32,})['""]?'''
+tags = ["jwt"]
+
+# Allowlist — files to ignore
+[allowlist]
+description = "Global allowlist"
+files = [
+  '''\.env\.example''',
+  '''terraform\.tfvars\.example''',
+  '''STEP-BY-STEP\.md''',
+  '''README\.md''',
+]
+paths = [
+  '''devops/infra/terraform/envs/prod/terraform\.tfvars\.example''',
+]
+regexes = [
+  '''CHANGE_ME''',
+  '''your-.*-here''',
+  '''placeholder''',
+]
