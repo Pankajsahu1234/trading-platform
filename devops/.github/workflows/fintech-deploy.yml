@@ -1,0 +1,79 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Frontend CI/CD — fintech → S3 → CloudFront
+# Triggers on push to main branch
+# ─────────────────────────────────────────────────────────────────────────────
+name: Frontend Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'fintech/**'
+      - '.github/workflows/fintech-deploy.yml'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-south-1
+  S3_BUCKET: cripto-prod-fintech
+  CF_DISTRIBUTION_ID: ${{ secrets.FINTECH_CF_DISTRIBUTION_ID }}
+
+jobs:
+  deploy:
+    name: Build → S3 → CloudFront Invalidate
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: fintech/package-lock.json
+
+      - name: Install dependencies
+        working-directory: fintech
+        run: npm ci
+
+      - name: Build
+        working-directory: fintech
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Sync build to S3
+        working-directory: fintech
+        run: |
+          # Upload immutable assets (hashed filenames) with long cache
+          aws s3 sync dist/assets s3://${{ env.S3_BUCKET }}/assets \
+            --cache-control "public,max-age=31536000,immutable" \
+            --delete
+
+          # Upload index.html and other root files with no cache
+          aws s3 sync dist s3://${{ env.S3_BUCKET }} \
+            --exclude "assets/*" \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ env.CF_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+      - name: Deployment summary
+        run: |
+          echo "## ✅ Frontend Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployed by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 Bucket:** ${{ env.S3_BUCKET }}" >> $GITHUB_STEP_SUMMARY
