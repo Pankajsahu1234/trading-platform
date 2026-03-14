@@ -74,6 +74,21 @@ async function main() {
     },
   });
 
+
+  // Create admin user
+  const { default: bcrypt } = await import("bcrypt");
+  const adminHash = await bcrypt.hash("Admin@12345", 10);
+  await prisma.admin.upsert({
+    where: { email: "admin@timofx.com" },
+    update: {},
+    create: {
+      email: "admin@timofx.com",
+      password_hash: adminHash,
+      name: "Super Admin",
+      login_attempts: 0
+    }
+  });
+  console.log("Admin created");
   console.log("✅ Seeding completed.");
 }
 
