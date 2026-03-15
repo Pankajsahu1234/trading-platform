@@ -5,8 +5,11 @@ import { SignupRequest } from "@/services/auth.service";
 export interface User {
   id: string;
   email: string;
+
   name: string;
+  phone: string;
   accountStatus: "inactive" | "active" | "verified";
+  robotStatus: "inactive" | "active";
   createdAt: Date;
   referralCode: string;
 }
@@ -86,7 +89,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<{ requires2FA?: boolean; tempToken?: string }>;
-  signup: (email: string, password: string, name: string, phone: string) => Promise<void>;
+  signup: (email: string, password: string, name: string, phone: string,referralCode :string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
   updateAuthAfter2FA: (token: string, refreshToken: string) => Promise<void>;
@@ -145,6 +148,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: email,
         name: res.data.user.name,
         accountStatus: res.data.user.accountStatus,
+        robotStatus: res.data.user.robotStatus,
+        phone: res.data.user.phone,
         createdAt: new Date(res.data.user.createdAt),
         referralCode: res.data.user.referralCode ?? "",
       };
@@ -204,6 +209,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: userRes.data.email,
           name: userRes.data.name,
           accountStatus: userRes.data.status,
+          robotStatus: userRes.data.robot_status,
           createdAt: new Date(userRes.data.created_at),
           referralCode: userRes.data.referral_code ?? "",
         };
@@ -225,6 +231,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: "",
           name: "",
           accountStatus: "active",
+          phone: "",
+          robotStatus: "inactive",
           createdAt: new Date(),
           referralCode: "",
         };
@@ -246,19 +254,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signup = async (email: string, password: string, name: string, phone: string) => {
+  const signup = async (email: string, password: string, name: string, phone: string,referralCode :string) => {
     console.log('🔐 AuthContext: Starting signup process...');
     console.log('Email:', email);
     dispatch({ type: "SIGNUP_START" });
     try {
-      const payload: SignupRequest = { email, password, name, phone };
-      console.log('📤 Sending registration request to backend...');
-      console.log('API Endpoint:', '/auth/register');
-      console.log('Payload:', { email, name, phone, password: '***' });
-      
-      const response = await apiClient.post("/auth/register", payload);
-      console.log('✅ Backend response received:', response.data);
-      
+      const payload: SignupRequest = { email, password, name, phone, referralCode };
+
+      // Check for referral code in URL query parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref');
+      let endpoint = "/auth/register";
+      if (ref) {
+        endpoint += `?ref=${ref}`;
+      }
+
+      await apiClient.post(endpoint, payload);
       // Store email so the verify-email page can pre-fill it
       sessionStorage.setItem("pending_verify_email", email);
       console.log('✅ Email stored in sessionStorage');

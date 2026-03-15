@@ -11,6 +11,7 @@ export interface SignupRequest {
   password: string;
   name: string;
   phone: string;
+  referralCode?: string ;
 }
 
 export interface SignupResponse {

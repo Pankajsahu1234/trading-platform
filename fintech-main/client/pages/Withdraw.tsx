@@ -1,55 +1,66 @@
 import { useState } from "react";
 import { GlassCard } from "@/components/common/GlassCard";
-import { isWithdrawalAllowed, getDaysUntilWithdrawal } from "@/utils/validation";
-import { TrendingUp, AlertCircle, Clock, CheckCircle } from "lucide-react";
-import { walletService } from "@/services/wallet.service";
+import { TrendingUp, AlertCircle, CheckCircle, MapPin } from "lucide-react";
+import withdrawService, { WithdrawalData } from "@/services/withdraw.service";
 import { useNavigate } from "react-router-dom";
+
+// Minimum amounts per type
+const MIN_AMOUNT = {
+  PROFIT: 25,
+  PRINCIPAL: 100,
+};
 
 export default function Withdraw() {
   const navigate = useNavigate();
-  const [withdrawType, setWithdrawType] = useState<"profit" | "principal">("profit");
+
+  const [withdrawType, setWithdrawType] = useState<"PROFIT" | "PRINCIPAL">("PROFIT");
   const [amount, setAmount] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const isAllowed = isWithdrawalAllowed();
+  const [successData, setSuccessData] = useState<WithdrawalData | null>(null);
+
+  const parsedAmount = parseFloat(amount);
+  const minAmount = MIN_AMOUNT[withdrawType];
+  const isValidAmount = !isNaN(parsedAmount) && parsedAmount >= minAmount;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccess(false);
+    setSuccessData(null);
 
-    if (!isAllowed) {
-      setError(
-        `Withdrawals are only allowed between 1st-5th of each month. Next window in ${getDaysUntilWithdrawal()} days.`
-      );
+    if (!isValidAmount) {
+      setError(`Minimum withdrawal amount for ${withdrawType === "PROFIT" ? "Profit" : "Principal"} is $${minAmount}`);
       return;
     }
 
-    if (!amount || parseFloat(amount) < 100) {
-      setError("Minimum withdrawal amount is $100");
+    if (!walletAddress.trim()) {
+      setError("Please enter your wallet/payment address.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const result = await walletService.initiateWithdrawal({
-        amount: parseFloat(amount),
-        type: withdrawType.toUpperCase() as "PROFIT" | "PRINCIPAL",
+      const result = await withdrawService.initiateWithdrawal({
+        type: withdrawType,
+        amount: parsedAmount,
+        walletAddress: walletAddress.trim(),
       });
 
-      setSuccess(true);
-      setAmount("");
-      
-      // Show success message and redirect after 3 seconds
-      setTimeout(() => {
-        navigate("/wallet");
-      }, 3000);
+      if (result.success) {
+        setSuccessData(result.data);
+        setAmount("");
+        setWalletAddress("");
 
+        setTimeout(() => {
+          navigate("/wallet");
+        }, 3000);
+      }
     } catch (err: any) {
       console.error("Withdrawal error:", err);
-      setError(err.message || "Failed to process withdrawal request. Please try again.");
+      const apiMessage = err?.response?.data?.message;
+      setError(apiMessage || err.message || "Failed to process withdrawal. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -58,6 +69,8 @@ export default function Withdraw() {
   return (
     <main className="p-4 lg:p-8 lg:ml-64 min-h-screen">
       <div className="max-w-2xl mx-auto space-y-8 animate-fade-in">
+
+        {/* Header */}
         <div>
           <h1 className="text-3xl font-bold mb-2">Withdraw Funds</h1>
           <p className="text-muted-foreground">
@@ -65,20 +78,7 @@ export default function Withdraw() {
           </p>
         </div>
 
-        {!isAllowed && (
-          <GlassCard heavy className="p-4 border-warning/50 flex items-start gap-4">
-            <Clock className="text-warning flex-shrink-0 mt-1" size={20} />
-            <div>
-              <p className="font-semibold">Withdrawal Window Closed</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Withdrawals are available only from 28th of each month.
-                <br />
-                Next window: In {getDaysUntilWithdrawal()} days
-              </p>
-            </div>
-          </GlassCard>
-        )}
-
+        {/* Error Banner */}
         {error && (
           <GlassCard heavy className="p-4 border-loss/50 flex items-start gap-4">
             <AlertCircle className="text-loss flex-shrink-0 mt-1" size={20} />
@@ -89,20 +89,27 @@ export default function Withdraw() {
           </GlassCard>
         )}
 
-        {success && (
+        {/* Success Banner */}
+        {successData && (
           <GlassCard heavy className="p-4 border-profit/50 flex items-start gap-4">
             <CheckCircle className="text-profit flex-shrink-0 mt-1" size={20} />
             <div>
-              <p className="font-semibold">Success!</p>
+              <p className="font-semibold">Withdrawal Request Submitted!</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Your withdrawal request has been submitted successfully. Redirecting to wallet...
+                Hi <span className="font-semibold">{successData.name}</span>, your{" "}
+                <span className="font-semibold">{successData.withdrawalType}</span> withdrawal of{" "}
+                <span className="text-profit font-semibold">${successData.finalAmount}</span>{" "}
+                has been queued to{" "}
+                <span className="font-mono text-xs">{successData.walletAddress}</span>.
+                Redirecting to wallet...
               </p>
             </div>
           </GlassCard>
         )}
 
         <GlassCard heavy className="p-8 space-y-6">
-          {/* Withdrawal Type Selection */}
+
+          {/* Withdrawal Type Toggle */}
           <div>
             <label className="block text-sm font-semibold mb-4">
               Withdrawal Type
@@ -110,49 +117,34 @@ export default function Withdraw() {
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
-                onClick={() => setWithdrawType("profit")}
+                onClick={() => { setWithdrawType("PROFIT"); setAmount(""); setError(""); }}
                 className={`p-4 rounded-lg border transition-all ${
-                  withdrawType === "profit"
+                  withdrawType === "PROFIT"
                     ? "border-primary bg-primary/10"
                     : "border-white/10 bg-card/50 hover:border-white/20"
                 }`}
               >
                 <p className="font-semibold mb-1">Profit Withdrawal</p>
-                <p className="text-xs text-muted-foreground">
-                  {/* Withdraw your earnings (1% fee) */}
-                </p>
+                <p className="text-xs text-muted-foreground">Minimum $25</p>
               </button>
+
               <button
                 type="button"
-                onClick={() => setWithdrawType("principal")}
+                onClick={() => { setWithdrawType("PRINCIPAL"); setAmount(""); setError(""); }}
                 className={`p-4 rounded-lg border transition-all ${
-                  withdrawType === "principal"
+                  withdrawType === "PRINCIPAL"
                     ? "border-primary bg-primary/10"
                     : "border-white/10 bg-card/50 hover:border-white/20"
                 }`}
               >
                 <p className="font-semibold mb-1">Principal Withdrawal</p>
-                <p className="text-xs text-muted-foreground">
-                  {/* Withdraw your investment (1% fee) */}
-                </p>
+                <p className="text-xs text-muted-foreground">Minimum $100</p>
               </button>
             </div>
           </div>
 
-          {/* Early Exit Fee Warning */}
-          {/* {withdrawType === "principal" && (
-            <GlassCard className="p-4 border-loss/50 flex items-start gap-4">
-              <AlertCircle className="text-loss flex-shrink-0 mt-0.5" size={20} />
-              <div className="text-sm">
-                <p className="font-semibold">Early Exit Fee</p>
-                <p className="text-muted-foreground mt-1">
-                  If your investment is less than 6 months old, an additional 15% fee applies.
-                </p>
-              </div>
-            </GlassCard>
-          )} */}
-
           <form onSubmit={handleSubmit} className="space-y-6">
+
             {/* Amount Input */}
             <div>
               <label className="block text-sm font-semibold mb-3">
@@ -167,22 +159,47 @@ export default function Withdraw() {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  min="100"
+                  min={minAmount}
                   step="0.01"
-                  disabled={!isAllowed || loading}
+                  disabled={loading}
                   className="w-full bg-input border border-white/10 rounded-lg pl-8 pr-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all disabled:opacity-50"
                   required
                 />
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Minimum withdrawal: $100
+                Minimum withdrawal: ${minAmount}
+              </p>
+            </div>
+
+            {/* Wallet Address Input */}
+            <div>
+              <label className="block text-sm font-semibold mb-3">
+                Wallet / Payment Address
+              </label>
+              <div className="relative">
+                <MapPin
+                  className="absolute left-4 top-3.5 text-muted-foreground"
+                  size={16}
+                />
+                <input
+                  type="text"
+                  value={walletAddress}
+                  onChange={(e) => setWalletAddress(e.target.value)}
+                  placeholder="Enter your wallet or payment address"
+                  disabled={loading}
+                  className="w-full bg-input border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all disabled:opacity-50"
+                  required
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Double-check your address — transactions cannot be reversed once processed.
               </p>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={!amount || !isAllowed || loading}
+              disabled={!isValidAmount || !walletAddress.trim() || loading}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <TrendingUp size={20} />
@@ -190,48 +207,36 @@ export default function Withdraw() {
             </button>
           </form>
 
-          {/* Fee Breakdown */}
-          {amount && parseFloat(amount) >= 100 && (
+          {/* Withdrawal Breakdown — no fees shown */}
+          {isValidAmount && (
             <div className="pt-6 border-t border-white/10">
               <h3 className="font-semibold mb-4">Withdrawal Breakdown</h3>
               <div className="space-y-3 text-sm">
+
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Gross Amount</span>
-                  <span className="font-semibold">${parseFloat(amount).toFixed(2)}</span>
+                  <span className="text-muted-foreground">Requested Amount</span>
+                  <span className="font-semibold">${parsedAmount.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Platform Fee (1%)</span>
-                  <span className="text-loss">
-                    -${(parseFloat(amount) * 0.01).toFixed(2)}
+
+                <div className="flex justify-between border-t border-white/10 pt-3">
+                  <span className="font-semibold">You Will Receive</span>
+                  <span className="font-semibold text-profit">
+                    ${parsedAmount.toFixed(2)}
                   </span>
                 </div>
-                {withdrawType === "principal" && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      Early Exit Fee (if applicable, 15%)
-                    </span>
-                    <span className="text-loss">
-                      -${(parseFloat(amount) * 0.15).toFixed(2)}
+
+                {walletAddress.trim() && (
+                  <div className="flex justify-between pt-2">
+                    <span className="text-muted-foreground">To Address</span>
+                    <span className="font-mono text-xs text-right max-w-[200px] truncate">
+                      {walletAddress.trim()}
                     </span>
                   </div>
-                )}
-                <div className="flex justify-between border-t border-white/10 pt-3">
-                  <span className="font-semibold">Net Amount (Minimum)</span>
-                  <span className="font-semibold text-profit">
-                    ${withdrawType === "principal" 
-                      ? (parseFloat(amount) * 0.84).toFixed(2)
-                      : (parseFloat(amount) * 0.99).toFixed(2)
-                    }
-                  </span>
-                </div>
-                {withdrawType === "principal" && (
-                  <p className="text-xs text-muted-foreground">
-                    * Early exit fee applies if any investment is less than 6 months old
-                  </p>
                 )}
               </div>
             </div>
           )}
+
         </GlassCard>
       </div>
     </main>

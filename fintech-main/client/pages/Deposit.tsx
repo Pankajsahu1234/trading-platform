@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 interface DepositAddressResponse {
   success: boolean;
   network: string;
-  address: string;
+  depositAddress: string;
 }
 
 interface DepositSubmitResponse {
@@ -19,7 +19,8 @@ export default function Deposit() {
   const [amount, setAmount] = useState("");
   const [txHash, setTxHash] = useState("");
   const [screenshot, setScreenshot] = useState<File | null>(null);
-  const [depositAddress, setDepositAddress] = useState<string>("TRRBEAZp1UhHd3W5sKHfpWjxk77WjargVg");
+  const [senderAddress, setSenderAddress] = useState("");
+  const [depositAddress, setDepositAddress] = useState<string>('');
   const [network, setNetwork] = useState<string>("TRC20");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -35,7 +36,9 @@ export default function Deposit() {
   const fetchDepositAddress = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get<DepositAddressResponse>("/wallet/deposit-address");
+      const response = await apiClient.get<DepositAddressResponse>("/admin/depositeAddress");
+      console.log("Deposit Address Response:", response.data);
+      setDepositAddress(response.data.depositAddress);
       const data = response.data as DepositAddressResponse;
       
       if (data.success) {
@@ -95,6 +98,11 @@ export default function Deposit() {
       return;
     }
 
+    if (!senderAddress || senderAddress.length !== 34) {
+      setError("Please enter the sending address (34 characters)");
+      return;
+    }
+
     if (!screenshot) {
       setError("Please upload a transaction screenshot");
       return;
@@ -114,6 +122,7 @@ export default function Deposit() {
       const formData = new FormData();
       formData.append('tx_hash', txHash);
       formData.append('amount', amount);
+      formData.append('sender_address', senderAddress);
       formData.append('screenshot', screenshot);
 
       // Send request with FormData
@@ -127,6 +136,7 @@ export default function Deposit() {
         setSuccess("Deposit submitted successfully! Your transaction will be verified within 5-10 minutes.");
         setAmount("");
         setTxHash("");
+        setSenderAddress("");
         setScreenshot(null);
         setStep(1);
         
@@ -226,11 +236,13 @@ export default function Deposit() {
                   </span>
                 </div>
 
-                {/* QR Code Placeholder */}
+                {/* QR Code */}
                 <div className="flex justify-center p-6 bg-white rounded-lg">
-                  <div className="w-48 h-48 flex items-center justify-center border-2 border-dashed border-gray-300">
-                    <QrCode size={48} className="text-gray-400" />
-                  </div>
+                  <img 
+                    src="/qr.png" 
+                    alt="Deposit QR Code" 
+                    className="w-48 h-48"
+                  />
                 </div>
 
                 {/* Deposit Address */}
@@ -381,16 +393,24 @@ export default function Deposit() {
                     )}
                   </div>
 
-                  {/* Deposit Address Display */}
+                  {/* Sender Address Input */}
                   <div>
                     <label className="block text-sm font-semibold mb-2">
-                      Deposit Address (Auto-filled)
+                      The address of the user’s address from where amount is paid
                     </label>
-                    <div className="p-3 bg-card/30 rounded-lg border border-white/10">
-                      <code className="text-xs font-mono break-all text-muted-foreground">
-                        {depositAddress}
-                      </code>
-                    </div>
+                    <input
+                      type="text"
+                      value={senderAddress}
+                      onChange={(e) => setSenderAddress(e.target.value)}
+                      placeholder="Enter sender address"
+                      maxLength={34}
+                      className="w-full bg-input border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                      required
+                      disabled={submitting}
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Max length: 34 characters
+                    </p>
                   </div>
 
                   {/* Buttons */}

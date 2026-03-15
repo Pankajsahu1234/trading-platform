@@ -244,7 +244,7 @@ export default function Dashboard() {
               colorClass="bg-gradient-to-br from-rose-50 to-rose-100 text-rose-600 dark:from-rose-900/30 dark:to-rose-800/30 dark:text-rose-400"
             />
             <StatCard
-              label="Platinum Members"
+              label="Activated Members"
               value={stats.platinum}
               icon={<Diamond className="w-6 h-6" />}
               colorClass="bg-gradient-to-br from-purple-50 to-purple-100 text-purple-600 dark:from-purple-900/30 dark:to-purple-800/30 dark:text-purple-400"

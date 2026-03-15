@@ -360,7 +360,7 @@ export default function History() {
                   <th className="text-left py-3 px-4">Date & Time</th>
                   <th className="text-left py-3 px-4">Type</th>
                   <th className="text-right py-3 px-4">Amount</th>
-                  <th className="text-right py-3 px-4">Net Amount</th>
+                  {/* <th className="text-right py-3 px-4">Net Amount</th> */}
                   <th className="text-left py-3 px-4">Status</th>
                 </tr>
               </thead>

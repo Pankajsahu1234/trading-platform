@@ -11,12 +11,14 @@ interface SimpleChartProps {
   data: DataPoint[];
   title?: string;
   height?: string;
+  currentValue?: number;
 }
 
 export function SimpleChart({
   data,
   title = "Price Chart",
   height = "h-96",
+  currentValue,
 }: SimpleChartProps) {
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
@@ -87,8 +89,21 @@ export function SimpleChart({
     return `$${price.toFixed(0)}`;
   };
 
-  const changePercent = ((data[data.length - 1].price - data[0].price) / data[0].price * 100).toFixed(2);
-  const isPositive = parseFloat(changePercent) >= 0;
+  const displayedCurrentValue = currentValue ?? data[data.length - 1].price;
+  let percentBase = 0;
+
+if (displayedCurrentValue < 1000) {
+  percentBase = 5;
+} else if (displayedCurrentValue >= 1000 && displayedCurrentValue <= 4999) {
+  percentBase = 7;
+} else if (displayedCurrentValue >= 5000 && displayedCurrentValue <= 8000) {
+  percentBase = 8;
+} else {
+  percentBase = 9;
+}
+
+const changePercent = (percentBase / 30).toFixed(2);
+const isPositive = true; // since these are fixed increments
 
   return (
     <GlassCard heavy className={`p-6 flex flex-col gap-4 ${height}`}>
@@ -99,11 +114,11 @@ export function SimpleChart({
           <div className="text-right">
             <p className="text-xs text-muted-foreground">Current Value</p>
             <p className="text-lg font-bold text-profit">
-              ${data[data.length - 1].price.toLocaleString()}
+              ${displayedCurrentValue.toLocaleString()}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-muted-foreground">Change</p>
+            <p className="text-xs text-muted-foreground">Profit Change</p>
             <p className={`text-lg font-bold ${isPositive ? 'text-profit' : 'text-red-500'}`}>
               {isPositive ? '+' : ''}{changePercent}%
             </p>
@@ -262,26 +277,7 @@ export function SimpleChart({
       </div>
 
       {/* Stats Footer */}
-      <div className="grid grid-cols-4 gap-4 pt-4 border-t border-white/10">
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground mb-1">Starting</p>
-          <p className="text-sm font-bold text-white">${data[0].price.toLocaleString()}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground mb-1">Peak</p>
-          <p className="text-sm font-bold text-profit">${maxPrice.toLocaleString()}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground mb-1">Low</p>
-          <p className="text-sm font-bold text-yellow-500">${minPrice.toLocaleString()}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground mb-1">Growth</p>
-          <p className={`text-sm font-bold ${isPositive ? 'text-profit' : 'text-red-500'}`}>
-            {isPositive ? '↑' : '↓'} {Math.abs(parseFloat(changePercent))}%
-          </p>
-          </div>
-      </div>
+      
     </GlassCard>
   );
 }

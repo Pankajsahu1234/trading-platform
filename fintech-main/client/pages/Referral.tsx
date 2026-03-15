@@ -42,7 +42,7 @@ export default function Referral() {
   }, [user?.id]);
 
   const progress = referralData?.nextRankTarget
-    ? (referralData.totalReferred / referralData.nextRankTarget) * 100
+    ? (referralData.activeReferrals / referralData.nextRankTarget) * 100
     : 0;
 
   return (
@@ -75,13 +75,20 @@ export default function Referral() {
         {!loading && !error && referralData && (
           <>
             {/* Referral Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <GlassCard heavy className="p-6">
                 <p className="text-muted-foreground text-sm font-medium">
                   Total Referrals
                 </p>
                 <p className="text-3xl font-bold mt-2">{referralData.totalReferred}</p>
                 <p className="text-xs text-muted-foreground mt-2">Friends invited</p>
+              </GlassCard>
+              <GlassCard heavy className="p-6">
+                <p className="text-muted-foreground text-sm font-medium">
+                  Active Referrals
+                </p>
+                <p className="text-3xl font-bold mt-2">{referralData.activeReferrals}</p>
+                <p className="text-xs text-muted-foreground mt-2">Friends who have completed actions</p>
               </GlassCard>
 
               <GlassCard heavy className="p-6">
@@ -150,7 +157,7 @@ export default function Referral() {
                   <div className="flex justify-between mb-3">
                     <span className="text-sm font-semibold">{referralData.rank}</span>
                     <span className="text-sm text-muted-foreground">
-                      {referralData.totalReferred} / {referralData.nextRankTarget}
+                      {referralData.activeReferrals} / {referralData.nextRankTarget}
                     </span>
                   </div>
                   <div className="w-full bg-card rounded-full h-3 overflow-hidden border border-white/10">
@@ -160,8 +167,8 @@ export default function Referral() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground mt-3">
-                    Invite {referralData.nextRankTarget - referralData.totalReferred} more{" "}
-                    {referralData.nextRankTarget - referralData.totalReferred === 1
+                    Activation of {referralData.nextRankTarget - referralData.activeReferrals} more{" "}
+                    {referralData.nextRankTarget - referralData.activeReferrals === 1
                       ? "friend"
                       : "friends"}{" "}
                     to reach the next rank

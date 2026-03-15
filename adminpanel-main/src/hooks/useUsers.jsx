@@ -2,13 +2,19 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { userService } from "../services/userService";
 import { withdrawalService } from "../services/withdrawalService";
 import { transactionService } from "../services/transactionService";
-
+import { adminDashboardService } from "../services/adminDashboardService";
 export const useUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [withdrawals, setWithdrawals] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [stats, setStats] = useState({
+  totalUsers: 0,
+  totalDeposits: 0,
+  totalWithdrawn: 0,
+  platinum: 0,
+});
 
   // Fetch all users on mount
   const fetchUsers = useCallback(async () => {
@@ -62,25 +68,42 @@ export const useUsers = () => {
     [],
   );
 
+const fetchDashboardStats = useCallback(async () => {
+  try {
+    const res = await adminDashboardService.getStats();
+
+    setStats({
+      totalUsers: res?.data?.totalUsers || 0,
+      totalDeposits: res?.data?.totalDeposits || 0,
+      totalWithdrawn: res?.data?.totalWithdrawals || 0,
+      platinum: res?.data?.robotActivatedUsers || 0,
+    });
+
+  } catch (err) {
+    console.error("Failed to fetch dashboard stats:", err.message);
+  }
+}, []);
+
   useEffect(() => {
     fetchUsers();
     fetchWithdrawals();
     fetchTransactions();
-  }, [fetchUsers, fetchWithdrawals, fetchTransactions]);
+     fetchDashboardStats(); 
+  }, [fetchUsers, fetchWithdrawals, fetchTransactions,  fetchDashboardStats ]);
 
   // Memoized Stats for the StatCards
-  const stats = useMemo(
-    () => ({
-      totalUsers: users.length,
-      totalDeposits: users.reduce((acc, u) => acc + (u?.totalDeposit || 0), 0),
-      totalWithdrawn: users.reduce(
-        (acc, u) => acc + (u?.totalWithdrawal || 0),
-        0,
-      ),
-      platinum: users.filter((u) => u?.rank === "Platinum").length,
-    }),
-    [users],
-  );
+  // const stats = useMemo(
+  //   () => ({
+  //     totalUsers: users.length,
+  //     totalDeposits: users.reduce((acc, u) => acc + (u?.totalDeposit || 0), 0),
+  //     totalWithdrawn: users.reduce(
+  //       (acc, u) => acc + (u?.totalWithdrawal || 0),
+  //       0,
+  //     ),
+  //     platinum: users.filter((u) => u?.rank === "Platinum").length,
+  //   }),
+  //   [users],
+  // );
 
   // Update user via API (name + phone)
   const updateUser = async (userId, data) => {

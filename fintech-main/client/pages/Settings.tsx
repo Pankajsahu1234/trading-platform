@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function Settings() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+   console.log("USER DATA:", user);
 
   return (
     <main className="p-4 lg:p-8 lg:ml-64 min-h-screen">
@@ -43,11 +44,20 @@ export default function Settings() {
                 disabled
               />
             </div>
+             <div>
+              <label className="block text-sm font-medium mb-2">Phone</label>
+              <input
+                type="tel"
+                defaultValue={user?.phone || "Not provided"}
+                className="w-full bg-input border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                disabled
+              />
+            </div>
           </div>
 
-          <button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2 rounded-lg transition-colors">
+          {/* <button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2 rounded-lg transition-colors">
             Save Changes
-          </button>
+          </button> */}
         </GlassCard>
 
         {/* Security Settings */}
@@ -67,7 +77,7 @@ export default function Settings() {
             <span className="text-muted-foreground">→</span>
           </button>
 
-          <button
+          {/* <button
             onClick={() => navigate("/security/enable-2fa")}
             className="w-full text-left p-4 bg-card/50 hover:bg-card border border-white/10 rounded-lg transition-colors flex items-center justify-between"
           >
@@ -78,7 +88,8 @@ export default function Settings() {
               </p>
             </div>
             <span className="text-muted-foreground">→</span>
-          </button>
+          </button> */}
+
         </GlassCard>
 
         {/* Notification Settings */}

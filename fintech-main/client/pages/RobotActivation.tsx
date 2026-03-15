@@ -25,22 +25,22 @@ export default function RobotActivation() {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const validateTxHash = (hash: string): boolean => {
-    // Standard transaction hash is 64-66 characters long (hex)
-    if (!hash || hash.length < 60) {
-      return false;
-    }
-    return /^0x?[a-fA-F0-9]{60,}$/.test(hash);
-  };
+  // const validateTxHash = (hash: string): boolean => {
+  //   // Standard transaction hash is 64-66 characters long (hex)
+  //   if (!hash || hash.length < 60) {
+  //     return false;
+  //   }
+  //   return /^0x?[a-fA-F0-9]{60,}$/.test(hash);
+  // };
 
-  const validateAddress = (address: string): boolean => {
-    // Standard crypto address validation (40-66 characters)
-    if (!address || address.length < 26) {
-      return false;
-    }
-    // Supports Ethereum, TRON, and other standard addresses
-    return /^(0x)?[a-zA-Z0-9]{26,}$/.test(address);
-  };
+  // const validateAddress = (address: string): boolean => {
+  //   // Standard crypto address validation (40-66 characters)
+  //   if (!address || address.length < 26) {
+  //     return false;
+  //   }
+  //   // Supports Ethereum, TRON, and other standard addresses
+  //   return /^(0x)?[a-zA-Z0-9]{26,}$/.test(address);
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,20 +53,16 @@ export default function RobotActivation() {
       return;
     }
 
-    if (!validateTxHash(txHash)) {
-      setError("Invalid transaction hash format. Please check and try again.");
-      return;
-    }
 
     if (!depositAddress.trim()) {
       setError("Please enter a deposit address");
       return;
     }
 
-    if (!validateAddress(depositAddress)) {
-      setError("Invalid deposit address format. Please check and try again.");
-      return;
-    }
+    // if (!validateAddress(depositAddress)) {
+    //   setError("Invalid deposit address format. Please check and try again.");
+    //   return;
+    // }
 
     try {
       setSubmitting(true);

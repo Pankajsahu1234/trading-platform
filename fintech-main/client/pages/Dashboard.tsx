@@ -69,7 +69,7 @@ export default function Dashboard() {
       <div className="w-full max-w-7xl mx-auto space-y-8 ">
         {/* Welcome Section */}
         <div className="space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold">Dashboard</h1>
+          <h1 className="text-3xl md:text-4xl font-bold">Dashboard</h1>r
           <p className="text-muted-foreground">
             Welcome back, {user?.name}! Here's your investment overview.
           </p>
@@ -78,7 +78,7 @@ export default function Dashboard() {
         {/* Key Metrics - 5 Cards Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <MetricsCard
-            title="Main Wallet"
+            title="Investment"
             value={displayBalance.mainWallet}
         
             icon={<Wallet />}
@@ -131,6 +131,7 @@ export default function Dashboard() {
                 data={investmentGrowthData}
                 title="Investment Growth Chart"
                 height="h-80"
+                currentValue={displayBalance.mainWallet}
               />
             )}
           </div>

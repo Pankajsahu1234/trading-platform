@@ -8,6 +8,7 @@ export const mockUser: User = {
   accountStatus: "active",
   createdAt: new Date("2024-01-15"),
   referralCode: "REF0ABCD1234",
+  robotStatus: "active",
 };
 
 // export const mockWalletBalance: WalletBalance = {

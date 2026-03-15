@@ -14,6 +14,7 @@ type ReferralResponse = {
   nextRankTarget: number
   referralLink: string
   referrals: ReferralUser[]
+  activeReferrals: number
 }
 
 export type {ReferralResponse,ReferralUser}

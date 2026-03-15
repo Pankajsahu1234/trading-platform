@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { GlassCard } from "@/components/common/GlassCard";
 import { Mail, Lock, User, Phone, LogIn, ChevronDown } from "lucide-react";
 import { TradingBackground } from "@/components/sections/TradingBackground";
+import { apiClient } from "@/services/api";
+import { set } from "zod/v4";
 
 const COUNTRIES = [
   { name: "India", code: "+91", flag: "🇮🇳", maxDigits: 10 },
@@ -28,10 +30,44 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [localError, setLocalError] = useState("");
+  const [res, setRes] = useState(undefined);
+  const [referralCode, setReferralCode] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('ref') || '';
+  });
+  const [reffer, setReffer] = useState(null);
   const [isDarkMode] = useState(() => {
     const saved = localStorage.getItem("appDarkMode");
     return saved !== null ? JSON.parse(saved) : true;
   });
+  
+
+ useEffect(() => {
+  const fetchReferralUser = async () => {
+    if (referralCode.length !== 8) return;
+
+    try {
+      const response = await apiClient.get(`/users/referral/${referralCode}`);
+      if(response.data === 404)  
+        {
+          setRes({data: {name: response?.message}});
+          return;
+        }
+      setRes(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching referral user:", error);
+    }
+  };
+
+  fetchReferralUser();
+}, [referralCode]);
+
+useEffect(() => {
+  if (referralCode.length !== 8) {
+    setRes(null);
+  }
+}, [referralCode]);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, "");
@@ -71,7 +107,7 @@ export default function Signup() {
     }
 
     try {
-      await signup(email, password, name, `${selectedCountry.code}${phone}`);
+      await signup(email, password, name, `${selectedCountry.code}${phone}`,referralCode);
       navigate("/verify-email");
     } catch (err) {
       console.error('❌ Signup failed:', err);
@@ -216,6 +252,21 @@ export default function Signup() {
                 />
               </div>
             </div>
+             {/* Referral Input */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Referral Code</label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                <input
+                  type="text"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value)}
+                  placeholder="Optional referral code"
+                  className="w-full bg-input border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
 
             {/* Password Input */}
             <div>
@@ -268,6 +319,17 @@ export default function Signup() {
             By signing up, you agree to our Terms of Service and Privacy Policy
           </p>
         </GlassCard>
+
+        {res && (
+          <GlassCard heavy className="p-6 text-center">
+            <h3 className="text-lg font-bold">Referred By</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              Name: {res?.data?.name || res.message || 'No referrer found'}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Referral Code: {res.data?.referral_code || 'N/A'}
+            </p>
+        </GlassCard> )}
 
         {/* Login Link */}
         <div className="text-center text-sm text-muted-foreground">
