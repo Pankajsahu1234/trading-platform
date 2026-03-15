@@ -32,7 +32,7 @@ jobs:
       - name: Build Docker image for scanning
         run: |
           docker build \
-            -f devops/infra/docker/Dockerfile.backend \
+            -f devops/docker/Dockerfile.backend \
             -t timo-backend:${{ github.sha }} \
             ./cripto_exchange-main
 
