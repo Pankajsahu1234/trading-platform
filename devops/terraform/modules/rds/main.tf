@@ -1,7 +1,11 @@
 resource "aws_db_subnet_group" "main" {
-  name       = "${var.project}-${var.environment}-db-subnet"
+  name       = "timo-prod-db-subnet"
   subnet_ids = var.private_subnet_ids
-  tags = { Name = "${var.project}-${var.environment}-db-subnet", Project = var.project, Environment = var.environment }
+  tags = { Name = "timo-prod2-db-subnet-group", Project = var.project, Environment = var.environment }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group" "rds" {
@@ -24,6 +28,9 @@ resource "aws_security_group" "rds" {
   }
 
   tags = { Name = "${var.project}-${var.environment}-rds-sg" }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_db_instance" "main" {

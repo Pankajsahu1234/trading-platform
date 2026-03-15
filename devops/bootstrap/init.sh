@@ -5,8 +5,8 @@
 set -e
 
 AWS_REGION="ap-south-1"
-BUCKET_NAME="cripto-tfstate-prod"
-TABLE_NAME="cripto-tfstate-lock"
+BUCKET_NAME="timo-tfstat3-prod-bucke3t"
+TABLE_NAME="timo-tfstat3-prod-lock"
 
 echo "==> Creating S3 bucket for Terraform state..."
 aws s3api create-bucket \

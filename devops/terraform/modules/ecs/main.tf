@@ -133,6 +133,9 @@ resource "aws_security_group" "alb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = { Name = "${var.project}-${var.environment}-alb-sg" }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group" "ecs" {
@@ -153,6 +156,10 @@ resource "aws_security_group" "ecs" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = { Name = "${var.project}-${var.environment}-ecs-sg" }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # ─── ALB ──────────────────────────────────────────────────────────────────────

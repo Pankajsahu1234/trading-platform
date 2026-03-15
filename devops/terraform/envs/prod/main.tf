@@ -11,10 +11,10 @@ terraform {
   # Remote state — S3 bucket + DynamoDB lock
   # Run bootstrap/init.sh ONCE before terraform init
   backend "s3" {
-    bucket         = "cripto-tfstate-prod"
+    bucket         = "timo-tfstat3-prod-bucke3t"
     key            = "prod/terraform.tfstate"
     region         = "ap-south-1"
-    dynamodb_table = "cripto-tfstate-lock"
+    dynamodb_table = "timo-tfstat3-prod-lock"
     encrypt        = true
   }
 }
