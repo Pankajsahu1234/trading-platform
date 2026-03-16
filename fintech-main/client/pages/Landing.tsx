@@ -97,11 +97,11 @@ export default function Landing() {
             <div className="flex justify-between items-center h-16">
               {/* Logo */}
               <div className="flex items-center gap-3">
-                <img 
-                  src="/logo.png" 
+                {/* <img 
+                  // src="/logo.png" 
                   alt="TimoFX Logo" 
                   className="w-10 h-10 object-contain"
-                />
+                /> */}
                 <div className="text-2xl font-bold bg-gradient-to-r from-[#A8893C] to-[#E2BC6A] bg-clip-text text-transparent">
                   TimoFX
                 </div>

@@ -133,7 +133,7 @@ export default function Deposit() {
       });
 
       if (response.data.success) {
-        setSuccess("Deposit submitted successfully! Your transaction will be verified within 5-10 minutes.");
+        setSuccess("Deposit submitted successfully! Your transaction will be verified within 15-30 minutes.");
         setAmount("");
         setTxHash("");
         setSenderAddress("");
@@ -225,14 +225,14 @@ export default function Deposit() {
                   </div>
                   <h2 className="text-2xl font-bold mb-2">Your Deposit Address</h2>
                   <p className="text-sm text-muted-foreground">
-                    Send USDT ({network}) to this address
+                    Send USDT (TRC-20) to this address
                   </p>
                 </div>
 
                 {/* Network Badge */}
                 <div className="flex justify-center">
                   <span className="px-4 py-2 bg-primary/20 text-primary rounded-full text-sm font-semibold">
-                    Network: {network}
+                    Network: TRON
                   </span>
                 </div>
 
@@ -287,7 +287,7 @@ export default function Deposit() {
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-warning font-bold mt-0.5">•</span>
-                      <span>Confirmation time: <strong>5-10 minutes</strong></span>
+                      <span>Confirmation time: <strong>15-30 minutes</strong></span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-warning font-bold mt-0.5">•</span>

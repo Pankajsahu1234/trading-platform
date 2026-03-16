@@ -167,7 +167,7 @@ export default function Withdraw() {
                 />
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Minimum withdrawal: ${minAmount}
+                {/* Minimum withdrawal: ${minAmount.toFixed(2)} */}
               </p>
             </div>
 

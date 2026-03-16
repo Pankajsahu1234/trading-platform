@@ -257,7 +257,7 @@ export default function RobotActivation() {
 
                 <div>
                   <label className="block text-sm font-semibold mb-3">
-                    Deposit Address <span className="text-loss">*</span>
+                    Sender Address <span className="text-loss">*</span>
                   </label>
                   <input
                     type="text"
@@ -270,7 +270,7 @@ export default function RobotActivation() {
                   />
                   <div className="mt-2 flex items-center justify-between">
                     <p className="text-xs text-muted-foreground">
-                      Your wallet deposit address
+                      Sender wallet address, from which you made the deposit.
                     </p>
                     {depositAddress && (
                       <button
@@ -320,7 +320,7 @@ export default function RobotActivation() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-warning font-bold mt-0.5">•</span>
-                    <span>Verification typically takes <strong>5-10 minutes</strong></span>
+                   <span>Verification typically takes <strong>15-30 minutes</strong></span>
                   </li>
                 </ul>
               </div>

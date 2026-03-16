@@ -157,7 +157,7 @@ class DepositScannerService {
           await prisma.blockchainDeposit.create({
             data: {
              id: randomUUID(),
-              id: randomUUID(),
+
               tx_hash: txHash,
               from_addr: from,
               to_addr: to,
@@ -206,7 +206,7 @@ class DepositScannerService {
           await tx.deposit.create({
             data: {
              id: randomUUID(),
-              id: randomUUID(),
+
               user_id: submission.user_id,
               amount,
               net_amount: amount,
@@ -234,7 +234,7 @@ class DepositScannerService {
           await tx.transaction.create({
             data: {
              id: randomUUID(),
-              id: randomUUID(),
+
               user_id: submission.user_id,
               type: "deposit",
               gross_amount: amount,
