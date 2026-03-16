@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { randomUUID } from 'crypto'
 const prisma = new PrismaClient();
 
 class InvestmentService {
@@ -76,6 +77,8 @@ class InvestmentService {
         // Create investment record
         const newInvestment = await tx.investment.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: userId,
             plan_id: planId,
             amount: amount,
@@ -89,6 +92,8 @@ class InvestmentService {
         // Create transaction record
         await tx.transaction.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: userId,
             type: 'INVESTMENT',
             source_wallet: 'INVESTMENT_BALANCE',
@@ -146,7 +151,7 @@ class InvestmentService {
       const investments = await prisma.investment.findMany({
         where,
         include: {
-          plan: true
+          InvestmentPlan: true
         },
         orderBy: {
           created_at: 'desc'
@@ -170,7 +175,7 @@ class InvestmentService {
           user_id: userId
         },
         include: {
-          plan: true
+          InvestmentPlan: true
         }
       });
 
@@ -222,6 +227,8 @@ class InvestmentService {
             // Log transaction
             await tx.transaction.create({
               data: {
+               id: randomUUID(),
+                id: randomUUID(),
                 user_id: investment.user_id,
                 type: 'DAILY_INTEREST',
                 source_wallet: 'INVESTMENT',
@@ -291,6 +298,8 @@ class InvestmentService {
         // Create withdrawal record
         const newWithdrawal = await tx.withdrawal.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: userId,
             type: 'PROFIT',
             requested_amount: amount,
@@ -303,6 +312,8 @@ class InvestmentService {
         // Create transaction record
         await tx.transaction.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: userId,
             type: 'PROFIT_WITHDRAWAL',
             source_wallet: 'PROFIT_BALANCE',
@@ -420,6 +431,8 @@ class InvestmentService {
         // Create withdrawal record
         const newWithdrawal = await tx.withdrawal.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: userId,
             type: 'PRINCIPAL',
             requested_amount: amount,
@@ -432,6 +445,8 @@ class InvestmentService {
         // Create transaction record
         await tx.transaction.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: userId,
             type: 'PRINCIPAL_WITHDRAWAL',
             source_wallet: 'INVESTMENT',

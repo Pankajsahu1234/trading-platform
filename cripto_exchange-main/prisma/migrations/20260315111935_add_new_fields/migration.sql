@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE `wallet` DROP COLUMN `total_profit`;
+ALTER TABLE `Wallet` DROP COLUMN `total_profit`;

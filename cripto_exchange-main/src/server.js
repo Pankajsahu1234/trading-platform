@@ -110,8 +110,6 @@ app.use("/api/wallet", walletRoutes);
 app.use("/api/deposit", depositRoutes);
 app.use("/api/createwallet", createWallet);
 app.use("/api/robot", robotRoutes);
-app.use('/api/investments', investmentRoutes)
-app.use('/api/withdrawals', withdrawalRoutes)
 app.use('/api/transfers', transferRoutes)
 app.use("/api/admin", adminDepositRoutes);
 app.use("/api/admin", adminTransactionRoutes);

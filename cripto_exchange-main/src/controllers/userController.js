@@ -142,52 +142,26 @@ async function getWalletBalance(req, res) {
       return res.status(404).json({ error: "Wallet not found" });
     }
 
-    // 🔥 Calculate growth for each field
-    const main = calculateGrowth(
-      Number(wallet.main_balance),
-      Number(wallet.previous_main_balance)
-    );
-
-    const active = calculateGrowth(
-      Number(wallet.active_deposit),
-      Number(wallet.previous_active_deposit)
-    );
-
-    const profit = calculateGrowth(
-      Number(wallet.profit_balance),
-      Number(wallet.previous_profit_balance)
-    );
-
-    const referral = calculateGrowth(
-      Number(wallet.referral_balance),
-      Number(wallet.previous_referral_balance)
-    );
-
-    const investment = calculateGrowth(
-      Number(wallet.investment_balance),
-      Number(wallet.previous_investment_balance)
-    );
-
     return res.json({
       mainWallet: Number(wallet.main_balance),
-      inscrease_mainWallet: main.increase,
-      inscrease_percentage_mainWallet_possitive: main.positive,
+      inscrease_mainWallet: 0,
+      inscrease_percentage_mainWallet_possitive: true,
 
-      activeDeposit: Number(wallet.active_deposit),
-      inscrease_percentage_activeDeposit: active.percentage,
-      increase_activeDeposit_positive: active.positive,
+      activeDeposit: Number(wallet.investment_balance),
+      inscrease_percentage_activeDeposit: 0,
+      increase_activeDeposit_positive: true,
 
       profitBalance: Number(wallet.profit_balance),
-      inscrease_percentage_profitBalance: profit.percentage,
-      inscrease_profitBalance_positive: profit.positive,
+      inscrease_percentage_profitBalance: 0,
+      inscrease_profitBalance_positive: true,
 
       referralBonus: Number(wallet.referral_balance),
-      inscrease_percentage_referralBonus: referral.percentage,
-      inscrease_referralBonus_positive: referral.positive,
+      inscrease_percentage_referralBonus: 0,
+      inscrease_referralBonus_positive: true,
 
       totalInvestment: Number(wallet.investment_balance),
-      inscrease_percentage_totalInvestment: investment.percentage,
-      inscrease_percentage_totalInvestment_positive: investment.positive,
+      inscrease_percentage_totalInvestment: 0,
+      inscrease_percentage_totalInvestment_positive: true,
     });
 
   } catch (error) {

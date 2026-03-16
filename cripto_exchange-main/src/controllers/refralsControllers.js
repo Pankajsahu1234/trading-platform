@@ -1,5 +1,6 @@
 // src/services/referral.service.js
 import { nanoid } from 'nanoid'
+import { randomUUID } from 'crypto'
 import * as refralService from '../services/referral.service.js'
 import { PrismaClient } from '@prisma/client'
 import { refreshToken } from './authControllers.js'
@@ -132,6 +133,8 @@ async function checkAndUpgradeRank(userId) {
       // Save reward history
       await prisma.referralRankHistory.create({
         data: {
+         id: randomUUID(),
+          id: randomUUID(),
           user_id: userId,
           rank_id: currentRank.id,
           reward_paid: currentRank.reward_amount,

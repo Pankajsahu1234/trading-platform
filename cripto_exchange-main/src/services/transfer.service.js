@@ -1,5 +1,6 @@
 // src/services/transfer.service.js
 import { PrismaClient } from '@prisma/client';
+import { randomUUID } from 'crypto'
 const prisma = new PrismaClient();
 
 class TransferService {
@@ -101,6 +102,8 @@ class TransferService {
         // Create transfer record
         const transfer = await tx.internalTransfer.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             sender_id: senderId,
             receiver_id: receiver.id,
             amount: transferAmount,
@@ -113,6 +116,8 @@ class TransferService {
         // Sender transaction (debit)
         await tx.transaction.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: senderId,
             type: 'USER_TO_USER_TRANSFER_SENT',
             source_wallet: 'MAIN_WALLET',
@@ -130,6 +135,8 @@ class TransferService {
         // Receiver transaction (credit)
         await tx.transaction.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: receiver.id,
             type: 'USER_TO_USER_TRANSFER_RECEIVED',
             source_wallet: 'USER_WALLET',

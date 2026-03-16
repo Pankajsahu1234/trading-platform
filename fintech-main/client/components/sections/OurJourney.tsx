@@ -21,7 +21,7 @@ const timelineData: TimelineItem[] = [
     year: "2024",
     title: "First Major Milestone",
     description:
-      "Successfully reached 1,000 active investors across the country, marking strong early trust and rapid community growth.",
+      "Successfully reached 10,000 active investors across the country, marking strong early trust and rapid community growth.",
   },
   {
     year: "2025",
@@ -31,9 +31,9 @@ const timelineData: TimelineItem[] = [
   },
   {
     year: "2025",
-    title: "10K Investor Milestone",
+    title: "25K Investor Milestone",
     description:
-      "Crossed 10,000+ registered investors in the second quarter of 2025, reflecting strong global adoption and platform growth.",
+      "Crossed 25,000+ registered investors in the second quarter of 2025, reflecting strong global adoption and platform growth.",
   },
   {
     year: "2026",

@@ -35,7 +35,7 @@ class WalletService {
   async getBalance(): Promise<WalletBalance> {
     try {
       // TODO: Replace with actual API endpoint
-      const response = await apiClient.get<WalletBalance>("/wallet/balance");
+      const response = await apiClient.get<WalletBalance>("/users/wallet/balance");
       return response.data;
     } catch (error) {
       throw error;
@@ -45,7 +45,7 @@ class WalletService {
   async getTransactionHistory(): Promise<Transaction[]> {
     try {
       // TODO: Replace with actual API endpoint
-      const response = await apiClient.get<Transaction[]>("/wallet/transactions");
+      const response = await apiClient.get<Transaction[]>("/users/transaction/history");
       return response.data;
     } catch (error) {
       throw error;

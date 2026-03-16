@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { randomUUID } from 'crypto'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import speakeasy from 'speakeasy'
@@ -51,6 +52,8 @@ async function register(req, res) {
     // 2. Create User
     const user = await prisma.user.create({
       data: {
+       id: randomUUID(),
+        id: randomUUID(),
         name,
         email,
         phone,
@@ -63,7 +66,7 @@ async function register(req, res) {
     })
     // 4. Create wallet, deposit address, and user role in parallel
     await Promise.all([
-      prisma.wallet.create({ data: { user_id: user.id } }),
+      prisma.wallet.create({ data: { id: randomUUID(), user_id: user.id } }),
     ]);
 
     // 5. Handle Referral via Service

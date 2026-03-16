@@ -23,13 +23,18 @@ async function getReferralsByUserId(userId) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: {
-      wallets: true,
-      referralRank: false,
-      referralsGiven: {
+      Wallet: true,
+      ReferralRank: false,
+      ReferralRankHistory: true,
+      Referral_Referral_referrer_idToUser: {
         include: {
-          referred: {
-            include: {
-              referralRankHistory: true
+          User_Referral_referred_user_idToUser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              created_at: true,
+              ReferralRankHistory: true
             }
           },
         },
@@ -41,10 +46,13 @@ async function getReferralsByUserId(userId) {
   if (!user) throw new Error("User not found");
 
   // Total referred
-  const totalReferred = user.referralsGiven.length;
+  const totalReferred = user.Referral_Referral_referrer_idToUser.length;
 
   // Total bonus
-  const totalBonus = Number ( user.wallets[0]?.referral_balance || 0);
+  const totalBonus =  user.ReferralRankHistory.reduce(
+  (sum, h) => sum + Number(h.reward_paid),
+  0
+);
   
   // Current rank
   const ranks = await prisma.referralRank.findUnique({
@@ -82,13 +90,13 @@ async function getReferralsByUserId(userId) {
     nextRankTarget,
     referralLink,
     activeReferrals, 
-    referrals: user.referralsGiven.map((ref) => ({
+    referrals: user.Referral_Referral_referrer_idToUser.map((ref) => ({
       id: ref.id,
-      name: ref.referred.name,
-      email: ref.referred.email,
-      joinedDate: ref.referred.created_at,
+      name: ref.User_Referral_referred_user_idToUser?.name,
+      email: ref.User_Referral_referred_user_idToUser?.email,
+      joinedDate: ref.User_Referral_referred_user_idToUser?.created_at,
       status: ref.activation_status ? "active" : "pending",
-      bonus: ref.referred.referralRankHistory.reduce((sum, h) => sum + Number(h.reward_paid), 0),
+      bonus:0
     })),
   };
 }

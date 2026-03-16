@@ -1,5 +1,6 @@
 
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from 'crypto'
 import { uploadDepositScreenshot } from "../services/s3.service.js";
 
 const prisma = new PrismaClient();
@@ -53,6 +54,8 @@ export const submitDeposit = async (req, res) => {
     // ✅ Save in DB
     const submission = await prisma.depositSubmission.create({
       data: {
+       id: randomUUID(),
+        id: randomUUID(),
         user_id: userId,
         amount: parseFloat(amount),
         deposit_address: userDepositAddress,

@@ -125,7 +125,7 @@ export default function Withdraw() {
                 }`}
               >
                 <p className="font-semibold mb-1">Profit Withdrawal</p>
-                <p className="text-xs text-muted-foreground">Minimum $25</p>
+                <p className="text-xs text-muted-foreground"></p>
               </button>
 
               <button
@@ -138,7 +138,7 @@ export default function Withdraw() {
                 }`}
               >
                 <p className="font-semibold mb-1">Principal Withdrawal</p>
-                <p className="text-xs text-muted-foreground">Minimum $100</p>
+                <p className="text-xs text-muted-foreground"></p>
               </button>
             </div>
           </div>

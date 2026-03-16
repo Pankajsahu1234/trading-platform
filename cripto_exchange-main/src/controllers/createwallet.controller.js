@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from 'crypto'
 const prisma = new PrismaClient();
 
 export const createWallet = async (req, res) => {
@@ -41,6 +42,8 @@ export const createWallet = async (req, res) => {
     // 3️⃣ Create wallet
     const wallet = await prisma.wallet.create({
       data: {
+       id: randomUUID(),
+        id: randomUUID(),
         user_id,
         main_balance: 0,
         investment_balance: 0,

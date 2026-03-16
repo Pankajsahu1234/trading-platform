@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { randomUUID } from 'crypto'
 const prisma = new PrismaClient();
 
 class WithdrawalService {
@@ -132,6 +133,8 @@ class WithdrawalService {
 
           const newWithdrawal = await tx.withdrawal.create({
             data: {
+             id: randomUUID(),
+              id: randomUUID(),
               user_id: userId,
               user_address: walletAddress,
               type: type,
@@ -146,6 +149,8 @@ class WithdrawalService {
 
           await tx.transaction.create({
             data: {
+             id: randomUUID(),
+              id: randomUUID(),
               user_id: userId,
               type: 'PROFIT_WITHDRAWAL',
               source_wallet: sourceBalance,
@@ -210,6 +215,8 @@ class WithdrawalService {
 
           const newWithdrawal = await tx.withdrawal.create({
             data: {
+             id: randomUUID(),
+              id: randomUUID(),
               user_id: userId,
               user_address: walletAddress,
               type: type,
@@ -224,6 +231,8 @@ class WithdrawalService {
 
           await tx.transaction.create({
             data: {
+             id: randomUUID(),
+              id: randomUUID(),
               user_id: userId,
               type: 'PRINCIPAL_WITHDRAWAL',
               source_wallet: sourceBalance,

@@ -1,7 +1,10 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useApp } from "@/context/AppContext";
+import { apiClient } from "@/services/api";
+import { useToast } from "@/hooks/use-toast";
 import {
   BarChart3,
   Wallet,
@@ -13,6 +16,7 @@ import {
   Menu,
   Bot,
   Send,
+  Loader2,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -68,8 +72,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const navigate = useNavigate();
   const { logout, user } = useAuth();
   const { setActivationModalOpen } = useApp();
+  const { toast } = useToast();
+  const [isCheckingRobotStatus, setIsCheckingRobotStatus] = useState(false);
 
-  const handleNav = (href: string, label: string) => {
+  const navigateWithExistingGuards = (href: string, label: string) => {
     if (
       (label === "Deposit" ||
         label === "Withdraw" ||
@@ -84,6 +90,55 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
     if (window.innerWidth < 1024) {
       onToggle();
     }
+  };
+
+ const handleRobotActivationClick = async (href: string) => {
+  if (isCheckingRobotStatus) return;
+
+  try {
+    setIsCheckingRobotStatus(true);
+
+    const response = await apiClient.get<{
+      success: boolean;
+      data: {
+        robot_status: string;
+        isExpired: boolean;
+        activation_timestamp: string | null;
+        expiry_date: string | null;
+      };
+    }>("/robot/status");
+
+    // ✅ Correct field name: robot_status, not status
+    const robotStatus = response.data?.data?.robot_status?.toUpperCase();
+    const isExpired = response.data?.data?.isExpired;
+
+    if (robotStatus === "ACTIVE" && !isExpired) {
+      // Robot active hai — directly page pe le jao
+      navigate(href);
+      if (window.innerWidth < 1024) onToggle();
+      return;
+    }
+
+    // Inactive ya expired — activation page pe le jao
+    navigateWithExistingGuards(href, "Activate Robot");
+
+  } catch (_error) {
+    // Error aaye tab bhi page pe le jao, block mat karo
+    navigateWithExistingGuards(href, "Activate Robot");
+  } finally {
+    setIsCheckingRobotStatus(false);
+  }
+};
+
+ 
+
+  const handleNav = (href: string, label: string) => {
+    if (label === "Activate Robot") {
+       void handleRobotActivationClick(href);
+      return;
+    }
+
+    navigateWithExistingGuards(href, label);
   };
 
   return (
@@ -122,21 +177,31 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
-            const isActionItem =
-              item.label === "Deposit" || item.label === "Withdraw";
+            const isRobotItem = item.label === "Activate Robot";
+            const isDisabled = isRobotItem && isCheckingRobotStatus;
 
             return (
               <div
                 key={item.href}
-                onClick={() => handleNav(item.href, item.label)}
+                onClick={() => {
+                  if (!isDisabled) {
+                    handleNav(item.href, item.label);
+                  }
+                }}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium cursor-pointer",
                   isActive
                     ? "bg-primary/20 text-primary border border-primary/30"
                     : "text-foreground hover:bg-sidebar-accent",
+                  isDisabled && "cursor-not-allowed opacity-60",
                 )}
+                aria-disabled={isDisabled}
               >
-                <Icon size={18} />
+                {isDisabled ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <Icon size={18} />
+                )}
                 {item.label}
               </div>
             );

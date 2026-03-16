@@ -1,6 +1,7 @@
 // controllers/robot.controller.js
 
 import robotActivationService from '../services/blockchain/robotActivation.service.js'
+import { randomUUID } from 'crypto'
 import { PrismaClient, Prisma } from '@prisma/client'
 import { checkAndUpgradeRank } from './refralsControllers.js'
 
@@ -51,6 +52,8 @@ export const activateRobotController = async (req, res) => {
     // create activation submission
     await prisma.depositSubmission.create({
       data: {
+       id: randomUUID(),
+        id: randomUUID(),
         user_id: userId,
         amount: 30, // fixed
         tx_hash,
@@ -112,7 +115,7 @@ export const getRobotStatusController = async (req, res) => {
     })
 
   } catch (error) {
-    return res.status(500).json({
+    return res.status(500).json({ 
       success: false,
       message: error.message,
     })

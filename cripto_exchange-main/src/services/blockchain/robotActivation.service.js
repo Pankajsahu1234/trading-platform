@@ -1,6 +1,7 @@
 // services/robotActivation.service.js
 
 import { PrismaClient,Prisma } from "@prisma/client";
+import { randomUUID } from 'crypto'
 import { checkAndUpgradeRank } from "../../controllers/refralsControllers.js";
 const prisma = new PrismaClient();
 
@@ -42,8 +43,8 @@ class RobotActivationService {
       }
     });
 
-  for (const submission of pendingRequests) {
-
+  for (const submission of pendingRequests) {   
+  const userid = submission.user_id;
   const blockchainTx = await prisma.blockchainDeposit.findFirst({
     where: {
       tx_hash: submission.tx_hash,
@@ -59,7 +60,6 @@ class RobotActivationService {
 
   await prisma.$transaction(
     async (tx) => {
-      const userid = submission.user_id;
 
       await tx.user.update({
         where: { id: submission.user_id },
@@ -82,6 +82,8 @@ class RobotActivationService {
 
       await tx.transaction.create({
         data: {
+         id: randomUUID(),
+          id: randomUUID(),
           user_id: submission.user_id,
           type: "robot_activation",
           gross_amount: Number(blockchainTx.amount),
@@ -92,20 +94,18 @@ class RobotActivationService {
         }
       });
 
-      const referrer = await prisma.referral.findUnique({
+    },
+    { timeout: 20000 }
+  );
+  
+  const referrer = await prisma.referral.findUnique({
       where: {
         referred_user_id: userid,
       },
-      })
+    })
 
-    if (!referrer) {
-      return res.status(200).json({
-        success: true,
-        message:
-          'NO REFERRER ASSOCIATED. Robot activated .',
-      })
-    }
-
+    if (referrer && !referrer.activation_status) {
+      
     // Mark referral as activated
     await prisma.referral.update({
       where: {
@@ -117,7 +117,6 @@ class RobotActivationService {
     })
 
     // Check and upgrade referrer rank (if eligible)
-    await checkAndUpgradeRank(referrer.referrer_id)
     
     // Reward referral income to referrer wallet
     await prisma.wallet.update({
@@ -131,11 +130,8 @@ class RobotActivationService {
         },
       },
     })
-
-
-    },
-    { timeout: 20000 }
-  );
+    await checkAndUpgradeRank(referrer.referrer_id)
+  }
 
   console.log("✅ Robot activated for user:", submission.user_id);
 }

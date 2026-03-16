@@ -8,7 +8,7 @@ export const getAllDepositsForAdmin = async (req, res) => {
 
     const deposits = await prisma.depositSubmission.findMany({
       include: {
-        user: {
+        User: {
           select: {
             id: true,
             email: true,

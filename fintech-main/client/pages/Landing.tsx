@@ -65,7 +65,7 @@ export default function Landing() {
   const navLinks = [
     { label: "Intro", id: "intro" },
     { label: "Portfolio", id: "portfolio" },
-    { label: "What We Do", id: "services" },
+    { label: "Investment Plans", id: "services" },
     { label: "About Us", id: "about" },
     { label: "Contact", id: "contact" },
   ];
@@ -392,19 +392,19 @@ export default function Landing() {
               {[
                 {
                   title: "Active Customers",
-                  value: "15974+",
+                  value: "58,433+",
                   icon: "👥",
                   color: "from-[#C9A84C] to-[#E2BC6A]",
                 },
                 {
                   title: "Funds Managed",
-                  value: "$250k+",
+                  value: "$15M+",
                   icon: "💰",
                   color: "from-[#A8893C] to-[#C9A84C]",
                 },
                 {
                   title: "Monthly Growth",
-                  value: "7-12%",
+                  value: "5-12%",
                   icon: "📈",
                   color: "from-[#E2BC6A] to-[#C9A84C]",
                 },
@@ -813,7 +813,7 @@ export default function Landing() {
                     </label>
                     <input
                       type="tel"
-                      placeholder="+91 98765 43210"
+                      placeholder="+49 040 4870 5778"
                       className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#C9A84C] transition-all ${
                         isDarkMode
                           ? "bg-[#0A1628] border-white/10 text-white placeholder-[#3D5068]"
@@ -993,7 +993,7 @@ export default function Landing() {
                     <svg className="w-4 h-4 text-[#C9A84C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
-                    <span>+49 40 4870 5778</span>
+                    <span>+49 040 4870 5778</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-[#B8C8D8]">
                     <svg className="w-4 h-4 text-[#C9A84C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,30 +1,16 @@
 // prisma/seed.js
 import { PrismaClient } from "@prisma/client";
-
+import { randomUUID } from "crypto";
 const prisma = new PrismaClient();
 
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // ============================
   // ROLES
-  // ============================
-  await prisma.role.upsert({
-    where: { role_name: "USER" },
-    update: {},
-    create: { role_name: "USER" },
-  });
+  await prisma.role.upsert({ where: { role_name: "USER" }, update: {}, create: { id: randomUUID(), role_name: "USER" } });
+  await prisma.role.upsert({ where: { role_name: "ADMIN" }, update: {}, create: { id: randomUUID(), role_name: "ADMIN" } });
 
-  await prisma.role.upsert({
-    where: { role_name: "ADMIN" },
-    update: {},
-    create: { role_name: "ADMIN" },
-  });
-
-  // ============================
   // REFERRAL RANKS
-  // ============================
-
   const referralRanks = [
     { rank_name: "Level 1", required_referrals: 10, reward_amount: 100 },
     { rank_name: "Level 2", required_referrals: 50, reward_amount: 500 },
@@ -37,51 +23,22 @@ async function main() {
     { rank_name: "Level 9", required_referrals: 4000, reward_amount: 5000 },
     { rank_name: "Level 10", required_referrals: 5000, reward_amount: 7000 },
   ];
-
   for (const rank of referralRanks) {
-    await prisma.referralRank.upsert({
-      where: { rank_name: rank.rank_name },
-      update: {},
-      create: rank,
-    });
+    await prisma.referralRank.upsert({ where: { rank_name: rank.rank_name }, update: {}, create: { id: randomUUID(), ...rank } });
   }
 
-  // ============================
   // INVESTMENT PLANS
-  // ============================
+  await prisma.investmentPlan.upsert({ where: { name: "Diamond Membership" }, update: {}, create: { id: randomUUID(), name: "Diamond Membership", min_amount: 100, max_amount: 999, min_interest: 5, max_interest: 5 } });
+  await prisma.investmentPlan.upsert({ where: { name: "Platinum Membership" }, update: {}, create: { id: randomUUID(), name: "Platinum Membership", min_amount: 1000, max_amount: null, min_interest: 7, max_interest: 12 } });
 
-  await prisma.investmentPlan.upsert({
-    where: { name: "Diamond Membership" },
-    update: {},
-    create: {
-      name: "Diamond Membership",
-      min_amount: 100,
-      max_amount: 999,
-      min_interest: 5,
-      max_interest: 5,
-    },
-  });
-
-  await prisma.investmentPlan.upsert({
-    where: { name: "Platinum Membership" },
-    update: {},
-    create: {
-      name: "Platinum Membership",
-      min_amount: 1000,
-      max_amount: null,
-      min_interest: 7,
-      max_interest: 12,
-    },
+  // ADMIN RECORD (for deposit address)
+  await prisma.admin.upsert({
+    where: { email: "admin@timofx.com" },
+    update: { depositAddress: "TRRBEAZp1UhHd3W5sKHfpWjxk77WjargVg" },
+    create: { id: randomUUID(), email: "admin@timofx.com", name: "Admin", password_hash: "changeme", depositAddress: "TRRBEAZp1UhHd3W5sKHfpWjxk77WjargVg" }
   });
 
   console.log("✅ Seeding completed.");
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch((e) => { console.error(e); process.exit(1); }).finally(async () => { await prisma.$disconnect(); });

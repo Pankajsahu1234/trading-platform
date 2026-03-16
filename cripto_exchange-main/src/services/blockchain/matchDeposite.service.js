@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from 'crypto'
 
 const prisma = new PrismaClient();
 
@@ -31,6 +32,8 @@ class DepositMatcherService {
 
         await tx.deposit.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: submission.user_id,
             amount: blockchainTx.amount,
             net_amount: blockchainTx.amount,
@@ -49,6 +52,8 @@ class DepositMatcherService {
 
         await tx.transaction.create({
           data: {
+           id: randomUUID(),
+            id: randomUUID(),
             user_id: submission.user_id,
             type: "deposit",
             gross_amount: blockchainTx.amount,

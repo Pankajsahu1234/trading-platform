@@ -69,7 +69,7 @@ export default function Dashboard() {
       <div className="w-full max-w-7xl mx-auto space-y-8 ">
         {/* Welcome Section */}
         <div className="space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold">Dashboard</h1>r
+          <h1 className="text-3xl md:text-4xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">
             Welcome back, {user?.name}! Here's your investment overview.
           </p>
@@ -106,7 +106,7 @@ export default function Dashboard() {
           />
           <MetricsCard
             title="Total Income"
-            value={displayBalance.profitBalance + displayBalance.referralBonus}
+            value={displayBalance.totalInvestment}
             icon={<ArrowDownLeft />}
           />
         </div>

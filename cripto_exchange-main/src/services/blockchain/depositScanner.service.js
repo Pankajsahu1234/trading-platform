@@ -1,5 +1,6 @@
 
 // import tronWeb from "./tronClient.js";
+import { randomUUID } from 'crypto'
 // import { PrismaClient } from "@prisma/client";
 
 // const prisma = new PrismaClient();
@@ -155,6 +156,8 @@ class DepositScannerService {
         if (!existingBlockchainTx) {
           await prisma.blockchainDeposit.create({
             data: {
+             id: randomUUID(),
+              id: randomUUID(),
               tx_hash: txHash,
               from_addr: from,
               to_addr: to,
@@ -176,7 +179,7 @@ class DepositScannerService {
   }
 });
 
-        if (submission) {
+        if (!submission) {
           console.log("⚠ No user submission yet for:", txHash);
           continue;
         }
@@ -202,6 +205,8 @@ class DepositScannerService {
           // Deposit record
           await tx.deposit.create({
             data: {
+             id: randomUUID(),
+              id: randomUUID(),
               user_id: submission.user_id,
               amount,
               net_amount: amount,
@@ -228,6 +233,8 @@ class DepositScannerService {
           // Transaction log
           await tx.transaction.create({
             data: {
+             id: randomUUID(),
+              id: randomUUID(),
               user_id: submission.user_id,
               type: "deposit",
               gross_amount: amount,

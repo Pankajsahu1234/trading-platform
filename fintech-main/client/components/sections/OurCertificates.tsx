@@ -10,24 +10,28 @@ const certificates = [
     name: "ISO 27001",
     description: "Information Security Management",
     icon: Shield,
+    image: "/certificates/ISO%20cetificate.png",
     verified: true,
   },
   {
     name: "PCI DSS",
     description: "Secure Payment Processing",
     icon: Lock,
+    image: "/certificates/pci%20dss.png",
     verified: true,
   },
   {
     name: "SOC 2 Type II",
     description: "Service Organization Control",
     icon: CheckCircle,
+    image: "/certificates/soc2%20type2.png",
     verified: true,
   },
   {
-    name: "Global Compliance",
-    description: "Financial Regulatory Standards",
+    name: "GDPR Compliance",
+    description: "Data Protection and Privacy Standards",
     icon: Award,
+    image: "/certificates/gdpr%20comp.png",
     verified: true,
   },
 ];
@@ -121,12 +125,25 @@ export function OurCertificates({ isDarkMode }: OurCertificatesProps) {
 
                 {/* Image/Document Placeholder Area */}
                 <motion.div
-                  className={`w-full h-32 border-b ${imagePlaceholderBg} flex items-center justify-center overflow-hidden bg-cover bg-center`}
+                  className={`w-full h-56 border-b ${imagePlaceholderBg} flex items-center justify-center overflow-hidden bg-cover bg-center`}
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.3 }}
                 >
+                  <img
+                    src={cert.image}
+                    alt={`${cert.name} certificate`}
+                    className="w-full h-full object-contain p-2"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      target.style.display = "none";
+                      const fallback = target.nextElementSibling as HTMLElement | null;
+                      if (fallback) {
+                        fallback.style.display = "block";
+                      }
+                    }}
+                  />
                   <div
-                    className={`text-[#C9A84C]/60 group-hover:text-[#C9A84C] transition-colors duration-300`}
+                    className={`hidden text-[#C9A84C]/60 group-hover:text-[#C9A84C] transition-colors duration-300`}
                   >
                     <Icon className="w-12 h-12 mx-auto" />
                   </div>
