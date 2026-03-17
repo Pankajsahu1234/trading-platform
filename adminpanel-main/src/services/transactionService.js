@@ -36,7 +36,7 @@ export const transactionService = {
     if (opts.type != null) params.set('type', opts.type);
 
     // backend path as shown in Postman screenshot
-    const url = `${BASE_URL}/api/admin/transactions${params.toString() ? `?${params}` : ''}`;
+    const url = `${BASE_URL}/admin/transactions${params.toString() ? `?${params}` : ''}`;
     const res = await fetch(url, {
       headers: authHeaders(),
     });

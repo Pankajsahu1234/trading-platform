@@ -18,7 +18,7 @@ const handleResponse = async (res) => {
 export const adminDashboardService = {
 
   getStats: async () => {
-    const res = await fetch(`${BASE_URL}/api/admin/dashboard/stats`, {
+    const res = await fetch(`${BASE_URL}/admin/dashboard/stats`, {
       headers: authHeaders()
     });
 

@@ -31,7 +31,7 @@ export const getRole = () => {
 export const authService = {
   login: async (email, password) => {
     // backend routes are namespaced under /api
-    const res = await fetch(`${BASE_URL}/api/admin/login`, {
+    const res = await fetch(`${BASE_URL}/admin/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       // the server expects email/password rather than username

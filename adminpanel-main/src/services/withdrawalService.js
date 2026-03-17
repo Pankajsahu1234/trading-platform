@@ -23,7 +23,7 @@ const handleResponse = async (res) => {
 
 export const withdrawalService = {
   getStats: async () => {
-    const res = await fetch(`${BASE_URL}/api/withdrawals/stats`, {
+    const res = await fetch(`${BASE_URL}/withdrawals/stats`, {
       headers: authHeaders(),
     });
     return handleResponse(res);
@@ -34,14 +34,14 @@ export const withdrawalService = {
     if (type) params.set("type", type);
     if (status) params.set("status", status);
     const query = params.toString() ? `?${params}` : "";
-    const res = await fetch(`${BASE_URL}/api/withdrawals${query}`, {
+    const res = await fetch(`${BASE_URL}/withdrawals${query}`, {
       headers: authHeaders(),
     });
     return handleResponse(res);
   },
 
   getById: async (withdrawalId) => {
-    const res = await fetch(`${BASE_URL}/api/withdrawals/${withdrawalId}`, {
+    const res = await fetch(`${BASE_URL}/withdrawals/${withdrawalId}`, {
       headers: authHeaders(),
     });
     return handleResponse(res);
@@ -49,7 +49,7 @@ export const withdrawalService = {
 
   cancel: async (withdrawalId) => {
     const res = await fetch(
-      `${BASE_URL}/api/withdrawals/${withdrawalId}/cancel`,
+      `${BASE_URL}/withdrawals/${withdrawalId}/cancel`,
       {
         method: "POST",
         headers: authHeaders(),
@@ -59,7 +59,7 @@ export const withdrawalService = {
   },
 
   processPrincipal: async () => {
-    const res = await fetch(`${BASE_URL}/api/withdrawals/process-principal`, {
+    const res = await fetch(`${BASE_URL}/withdrawals/process-principal`, {
       method: "POST",
       headers: authHeaders(),
     });
@@ -67,14 +67,14 @@ export const withdrawalService = {
   },
 
   getAdminPending: async () => {
-    const res = await fetch(`${BASE_URL}/api/withdrawals/admin/pending`, {
+    const res = await fetch(`${BASE_URL}/withdrawals/admin/pending`, {
       headers: authHeaders(),
     });
     return handleResponse(res);
   },
 
   approveWithdrawal: async (withdrawalId) => {
-    const res = await fetch(`${BASE_URL}/api/withdrawals/admin/${withdrawalId}/approve`, {
+    const res = await fetch(`${BASE_URL}/withdrawals/admin/${withdrawalId}/approve`, {
       method: "POST",
       headers: authHeaders(),
     });
@@ -82,7 +82,7 @@ export const withdrawalService = {
   },
 
   rejectWithdrawal: async (withdrawalId) => {
-    const res = await fetch(`${BASE_URL}/api/withdrawals/admin/${withdrawalId}/reject`, {
+    const res = await fetch(`${BASE_URL}/withdrawals/admin/${withdrawalId}/reject`, {
       method: "POST",
       headers: authHeaders(),
     });

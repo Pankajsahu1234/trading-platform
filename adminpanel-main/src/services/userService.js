@@ -24,21 +24,21 @@ const handleResponse = async (res) => {
 
 export const userService = {
   getAll: async () => {
-    const res = await fetch(`${BASE_URL}/api/users`, {
+    const res = await fetch(`${BASE_URL}/users`, {
       headers: authHeaders(),
     });
     return handleResponse(res);
   },
 
   getById: async (userId) => {
-    const res = await fetch(`${BASE_URL}/api/users/${userId}`, {
+    const res = await fetch(`${BASE_URL}/users/${userId}`, {
       headers: authHeaders(),
     });
     return handleResponse(res);
   },
 
   update: async (userId, data) => {
-    const res = await fetch(`${BASE_URL}/api/users/${userId}`, {
+    const res = await fetch(`${BASE_URL}/users/${userId}`, {
       method: 'PUT',
       headers: authHeaders(),
       body: JSON.stringify(data),
