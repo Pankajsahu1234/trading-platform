@@ -232,21 +232,21 @@ export default function P2PTransaction() {
             <form onSubmit={handleSearchReceiver} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold mb-2">
-                  Receiver Email / Phone / User ID
+                  Receiver Email 
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="Enter receiver email, phone, or user ID"
+                    placeholder="Enter receiver email"
                     className="flex-1 bg-input border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all disabled:opacity-50"
                     disabled={searching || receiver !== null}
                   />
                   <button
                     type="submit"
                     disabled={searching || receiver !== null}
-                    className="bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-primary-foreground font-semibold px-6 py-3 rounded-lg transition-all flex items-center gap-2"
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-primary-foreground font-semibold px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2"
                   >
                     {searching ? (
                       <>

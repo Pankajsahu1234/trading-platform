@@ -130,7 +130,8 @@ export default function Dashboard() {
               <SimpleChart
                 data={investmentGrowthData}
                 title="Investment Growth Chart"
-                height="h-80"
+                // height="h-80"
+                height="h-64 sm:h-72 md:h-80"
                 currentValue={displayBalance.mainWallet}
               />
             )}
@@ -262,7 +263,7 @@ export default function Dashboard() {
             <h3 className="text-xl font-semibold">Account Information</h3>
             <StatusBadge
               status={
-                user?.accountStatus === "inactive" ? "inactive" : "active"
+                user?.robotStatus === "INACTIVE" ? "inactive" : "active"
               }
             />
           </div>

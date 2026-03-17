@@ -122,35 +122,39 @@ export function MarketCandleChart() {
   return (
     <div className="glass-card p-6 animate-fade-in">
       <div className="flex flex-col gap-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-bold">Live Market Candlesticks</h3>
-            <p className="text-sm text-muted-foreground">
-              {selectedSymbol.name} - Real-time 15-minute candles
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground">Powered by</p>
-            <p className="text-sm font-bold text-primary">TradingView</p>
-          </div>
-        </div>
+       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+
+  <div className="min-w-0">
+    <h3 className="text-lg md:text-xl font-bold">
+      Live Market Candlesticks
+    </h3>
+    <p className="text-xs md:text-sm text-muted-foreground">
+      {selectedSymbol.name} - Real-time 15-minute candles
+    </p>
+  </div>
+
+  <p className="text-xs text-muted-foreground md:text-right">
+    Powered by <span className="font-bold text-primary">TradingView</span>
+  </p>
+
+</div>
 
         {/* Symbol Selector */}
-        <div className="flex gap-2 flex-wrap">
-          {SYMBOLS.map((sym) => (
-            <button
-              key={sym.id}
-              onClick={() => handleSymbolChange(sym)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${
-                selectedSymbol.id === sym.id
-                  ? "bg-primary text-primary-foreground shadow-lg scale-105"
-                  : "bg-card border border-border hover:border-primary hover:scale-102"
-              }`}
-            >
-              <span>{sym.displayName}</span>
-            </button>
-          ))}
-        </div>
+       <div className="grid grid-cols-2 sm:grid-cols-2 md:flex md:flex-wrap gap-2">
+  {SYMBOLS.map((sym) => (
+    <button
+      key={sym.id}
+      onClick={() => handleSymbolChange(sym)}
+      className={`w-full md:w-auto px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+        selectedSymbol.id === sym.id
+          ? "bg-primary text-primary-foreground shadow-lg scale-105"
+          : "bg-card border border-border hover:border-primary hover:scale-102"
+      }`}
+    >
+      <span>{sym.displayName}</span>
+    </button>
+  ))}
+</div>
       </div>
 
       {/* TradingView Widget Container */}

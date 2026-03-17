@@ -119,7 +119,7 @@ export default function Referral() {
                 Your Referral Link
               </h3>
 
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   value={referralData.referralLink || ""}
@@ -128,7 +128,7 @@ export default function Referral() {
                 />
                 <button
                   onClick={handleCopyLink}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-lg transition-all flex items-center gap-2"
+                  className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2"
                 >
                   {copied ? (
                     <>
