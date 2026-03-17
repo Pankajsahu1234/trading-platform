@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosError } from "axios";
 
 const API_BASE_URL = "https://api.timofx.com/api";
 
+
 class ApiService {
   private instance: AxiosInstance;
 
