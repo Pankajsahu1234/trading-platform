@@ -658,7 +658,8 @@ export default function Deposit() {
   return (
     // <main className="p-4 lg:p-8 lg:ml-64 min-h-screen overflow-x-hidden w-full">
     //   <div className="max-w-3xl mx-auto space-y-8 animate-fade-in w-full min-w-0">
- <main className="w-full max-w-full overflow-x-hidden px-3 sm:px-4 lg:px-8 lg:ml-64 min-h-screen">
+//  <main className="w-full max-w-full overflow-x-hidden px-3 sm:px-4 lg:px-8 lg:ml-64 min-h-screen">
+<main className="w-full max-w-full overflow-x-hidden px-3 sm:px-4 lg:px-6 lg:ml-64 lg:w-[calc(100%-16rem)] min-h-screen">
       <div className="w-full max-w-3xl mx-auto space-y-6 sm:space-y-8">
 
         <div>
@@ -722,7 +723,8 @@ export default function Deposit() {
             {/* Step 1: Deposit Address */}
             {step === 1 && (
               // <GlassCard heavy className="p-4 sm:p-8 space-y-6 min-w-0">
-              <GlassCard className="p-4 sm:p-6 space-y-4 w-full max-w-full overflow-hidden">
+              // <GlassCard className="p-4 sm:p-6 space-y-4 w-full max-w-full overflow-hidden">
+              <GlassCard className="p-4 space-y-4 w-full max-w-full overflow-hidden">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Wallet className="text-primary" size={32} />
