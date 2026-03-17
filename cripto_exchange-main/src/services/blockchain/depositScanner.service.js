@@ -1,6 +1,7 @@
 
+// import { randomUUID } from 'crypto'
+
 // import tronWeb from "./tronClient.js";
-import { randomUUID } from 'crypto'
 // import { PrismaClient } from "@prisma/client";
 
 // const prisma = new PrismaClient();
@@ -23,7 +24,6 @@ import { randomUUID } from 'crypto'
 //           onlyConfirmed: true
 //         }
 //       );
-// console.log("Events fetched:", events);
 //       const eventList = Array.isArray(events)
 //         ? events
 //         : events?.data || [];
@@ -31,57 +31,102 @@ import { randomUUID } from 'crypto'
 //       for (const event of eventList) {
 
 //         const txHash = event.transaction_id;
-
 //         const to = tronWeb.address.fromHex(event.result.to);
+//         const from = tronWeb.address.fromHex(event.result.from);
 //         const amount = Number(event.result.value) / 1_000_000;
 
-//         // Only deposits to ADMIN WALLET
+//         // 👉 Only deposits to ADMIN WALLET
 //         if (to !== WATCH_ADDRESS) continue;
 
-//         // Already processed?
-//         const alreadyCredited = await prisma.deposit.findFirst({
-//           where: { blockchain_txid: txHash }
+//         console.log("💰 Blockchain Deposit Found:", txHash, amount);
+
+//         // STEP 1 — Save blockchain deposit (if not already saved)
+//         const existingBlockchainTx = await prisma.blockchainDeposit.findUnique({
+//           where: { tx_hash: txHash }
 //         });
 
-//         if (alreadyCredited) continue;
+//         if (!existingBlockchainTx) {
+//           await prisma.blockchainDeposit.create({
+//             data: {
+//              id: randomUUID(),
 
-//         console.log("💰 Deposit detected:", txHash, amount);
+//               tx_hash: txHash,
+//               from_addr: from,
+//               to_addr: to,
+//               amount,
+//               confirmations: 1,
+//               is_used: false
+//             }
+//           });
 
-//         // Match submission by TX HASH
-//         const submission = await prisma.depositSubmission.findFirst({
-//           where: {
-//             tx_hash: txHash,
-//             status: "PENDING"
-//           }
-//         });
+//           console.log("📦 Stored in BlockchainDeposit table");
+//         }
+
+//         // STEP 2 — Find matching user submission
+//        const submission = await prisma.depositSubmission.findFirst({
+//   where: {
+//     tx_hash: txHash,
+//     status: "PENDING",
+//     type: "DEPOSIT"   // 👈 ONLY NORMAL DEPOSITS
+//   }
+// });
 
 //         if (!submission) {
-//           console.log("⚠ No submission found for:", txHash);
+//           console.log("⚠ No user submission yet for:", txHash);
+//           continue;
+//         }
+
+//         // STEP 3 — Check blockchain record again
+//         const blockchainTx = await prisma.blockchainDeposit.findUnique({
+//           where: { tx_hash: txHash }
+//         });
+
+//         if (!blockchainTx || blockchainTx.is_used) {
+//           console.log("⚠ Already used or missing:", txHash);
+//           continue;
+//         }
+
+//         // STEP 4 — SECURITY MATCH
+//         if (Number(submission.amount) !== Number(blockchainTx.amount)) {
+//           console.log("❌ Amount mismatch");
 //           continue;
 //         }
 
 //         await prisma.$transaction(async (tx) => {
 
+//           // Deposit record
 //           await tx.deposit.create({
 //             data: {
+//              id: randomUUID(),
+
 //               user_id: submission.user_id,
 //               amount,
 //               net_amount: amount,
 //               blockchain_txid: txHash,
 //               deposit_address: to,
-//               sweep_status: "CONFIRMED",
-//             },
-//           });
-
-//           await tx.wallet.update({
-//             where: { user_id: submission.user_id },
-//             data: {
-//               main_balance: { increment: amount }
+//               sweep_status: "CONFIRMED"
 //             }
 //           });
 
+        
+
+//           // Wallet credit
+//           await tx.wallet.upsert({
+//             where: { user_id: submission.user_id },
+//             update: {
+//               main_balance: { increment: amount }
+//             },
+//             create: {
+//               user_id: submission.user_id,
+//               main_balance: amount
+//             }
+//           });
+
+//           // Transaction log
 //           await tx.transaction.create({
 //             data: {
+//              id: randomUUID(),
+
 //               user_id: submission.user_id,
 //               type: "deposit",
 //               gross_amount: amount,
@@ -91,14 +136,23 @@ import { randomUUID } from 'crypto'
 //             }
 //           });
 
+//           // Mark submission confirmed
 //           await tx.depositSubmission.update({
 //             where: { id: submission.id },
 //             data: { status: "CONFIRMED" }
 //           });
 
+//           // Mark blockchain tx used
+//           await tx.blockchainDeposit.update({
+//             where: { tx_hash: txHash },
+//             data: { is_used: true }
+//           });
+
+//         }, {
+//           timeout: 15000 // 15 seconds timeout for S3 upload + DB operations
 //         });
 
-//         console.log("✅ Deposit credited to user:", submission.user_id);
+//         console.log("✅ Deposit Credited to:", submission.user_id);
 
 //       }
 
@@ -109,6 +163,176 @@ import { randomUUID } from 'crypto'
 // }
 
 // export default new DepositScannerService();
+
+
+
+
+// -------------last 24 hours --------------
+
+
+
+
+
+
+// import axios from "axios";
+// import tronWeb from "./tronClient.js";
+// import { PrismaClient } from "@prisma/client";
+// import { randomUUID } from "crypto";
+
+// const prisma = new PrismaClient();
+
+// const WATCH_ADDRESS = process.env.ADMIN_WALLET;
+// const API_KEY = process.env.TRONGRID_API_KEY;
+
+// class DepositScannerService {
+
+//   async scan() {
+//     try {
+
+//       console.log("🔍 Scanning wallet deposits...");
+
+//       const url =
+//         `https://api.trongrid.io/v1/accounts/${WATCH_ADDRESS}/transactions/trc20?limit=200`;
+
+//       const res = await axios.get(url, {
+//         headers: {
+//           "TRON-PRO-API-KEY": API_KEY
+//         }
+//       });
+
+//       const txs = res.data?.data || [];
+
+//       for (const tx of txs) {
+
+//         const txHash = tx.transaction_id;
+
+//         const to = tx.to;
+//         const from = tx.from;
+
+//         const amount = Number(tx.value) / 1_000_000;
+
+//         if (to !== WATCH_ADDRESS) continue;
+
+//         console.log("💰 Deposit Found:", txHash, amount);
+
+//         const existingBlockchainTx =
+//           await prisma.blockchainDeposit.findUnique({
+//             where: { tx_hash: txHash }
+//           });
+
+//         if (!existingBlockchainTx) {
+
+//           await prisma.blockchainDeposit.create({
+//             data: {
+//               id: randomUUID(),
+//               tx_hash: txHash,
+//               from_addr: from,
+//               to_addr: to,
+//               amount,
+//               confirmations: 1,
+//               is_used: false
+//             }
+//           });
+
+//           console.log("📦 Stored in BlockchainDeposit table");
+//         }
+
+//         const submission =
+//           await prisma.depositSubmission.findFirst({
+//             where: {
+//               tx_hash: txHash,
+//               status: "PENDING",
+//               type: "DEPOSIT"
+//             }
+//           });
+
+//         if (!submission) {
+//           console.log("⚠ No user submission yet:", txHash);
+//           continue;
+//         }
+
+//         const blockchainTx =
+//           await prisma.blockchainDeposit.findUnique({
+//             where: { tx_hash: txHash }
+//           });
+
+//         if (!blockchainTx || blockchainTx.is_used) continue;
+
+//         if (Number(submission.amount) !== Number(blockchainTx.amount)) {
+//           console.log("❌ Amount mismatch");
+//           continue;
+//         }
+
+//         await prisma.$transaction(async (db) => {
+
+//           await db.deposit.create({
+//             data: {
+//               id: randomUUID(),
+//               user_id: submission.user_id,
+//               amount,
+//               net_amount: amount,
+//               blockchain_txid: txHash,
+//               deposit_address: to,
+//               sweep_status: "CONFIRMED"
+//             }
+//           });
+
+//           await db.wallet.upsert({
+//             where: { user_id: submission.user_id },
+//             update: {
+//               main_balance: { increment: amount }
+//             },
+//             create: {
+//               user_id: submission.user_id,
+//               main_balance: amount
+//             }
+//           });
+
+//           await db.transaction.create({
+//             data: {
+//               id: randomUUID(),
+//               user_id: submission.user_id,
+//               type: "deposit",
+//               gross_amount: amount,
+//               net_amount: amount,
+//               status: "confirmed",
+//               reference_id: txHash
+//             }
+//           });
+
+//           await db.depositSubmission.update({
+//             where: { id: submission.id },
+//             data: { status: "CONFIRMED" }
+//           });
+
+//           await db.blockchainDeposit.update({
+//             where: { tx_hash: txHash },
+//             data: { is_used: true }
+//           });
+
+//         });
+
+//         console.log("✅ Deposit Credited:", submission.user_id);
+
+//       }
+
+//     } catch (err) {
+
+//       console.error("❌ Scanner Error:", err.response?.data || err.message);
+
+//     }
+//   }
+// }
+
+// export default new DepositScannerService();
+
+
+
+
+
+
+import axios from "axios";
+import { randomUUID } from "crypto";
 import tronWeb from "./tronClient.js";
 import { PrismaClient } from "@prisma/client";
 
@@ -124,40 +348,37 @@ class DepositScannerService {
 
       console.log("🔍 Scanning USDT deposits...");
 
-      const events = await tronWeb.getEventResult(
-        USDT_CONTRACT,
-        {
-          eventName: "Transfer",
-          size: 50,
-          onlyConfirmed: true
+      const url = `https://api.trongrid.io/v1/accounts/${WATCH_ADDRESS}/transactions/trc20?limit=50`;
+
+      const res = await axios.get(url, {
+        headers: {
+          "TRON-PRO-API-KEY": process.env.TRONGRID_API_KEY
         }
-      );
-      const eventList = Array.isArray(events)
-        ? events
-        : events?.data || [];
+      });
+
+      const eventList = res.data?.data || [];
 
       for (const event of eventList) {
 
         const txHash = event.transaction_id;
-        const to = tronWeb.address.fromHex(event.result.to);
-        const from = tronWeb.address.fromHex(event.result.from);
-        const amount = Number(event.result.value) / 1_000_000;
+        const to = event.to;
+        const from = event.from;
+        const amount = Number(event.value) / 1_000_000;
 
-        // 👉 Only deposits to ADMIN WALLET
         if (to !== WATCH_ADDRESS) continue;
 
         console.log("💰 Blockchain Deposit Found:", txHash, amount);
 
-        // STEP 1 — Save blockchain deposit (if not already saved)
-        const existingBlockchainTx = await prisma.blockchainDeposit.findUnique({
-          where: { tx_hash: txHash }
-        });
+        const existingBlockchainTx =
+          await prisma.blockchainDeposit.findUnique({
+            where: { tx_hash: txHash }
+          });
 
         if (!existingBlockchainTx) {
+
           await prisma.blockchainDeposit.create({
             data: {
-             id: randomUUID(),
-
+              id: randomUUID(),
               tx_hash: txHash,
               from_addr: from,
               to_addr: to,
@@ -170,31 +391,27 @@ class DepositScannerService {
           console.log("📦 Stored in BlockchainDeposit table");
         }
 
-        // STEP 2 — Find matching user submission
-       const submission = await prisma.depositSubmission.findFirst({
-  where: {
-    tx_hash: txHash,
-    status: "PENDING",
-    type: "DEPOSIT"   // 👈 ONLY NORMAL DEPOSITS
-  }
-});
+        // 👇 Remaining logic EXACT same as your code
+
+        const submission = await prisma.depositSubmission.findFirst({
+          where: {
+            tx_hash: txHash,
+            status: "PENDING",
+            type: "DEPOSIT"
+          }
+        });
 
         if (!submission) {
           console.log("⚠ No user submission yet for:", txHash);
           continue;
         }
 
-        // STEP 3 — Check blockchain record again
         const blockchainTx = await prisma.blockchainDeposit.findUnique({
           where: { tx_hash: txHash }
         });
 
-        if (!blockchainTx || blockchainTx.is_used) {
-          console.log("⚠ Already used or missing:", txHash);
-          continue;
-        }
+        if (!blockchainTx || blockchainTx.is_used) continue;
 
-        // STEP 4 — SECURITY MATCH
         if (Number(submission.amount) !== Number(blockchainTx.amount)) {
           console.log("❌ Amount mismatch");
           continue;
@@ -202,11 +419,9 @@ class DepositScannerService {
 
         await prisma.$transaction(async (tx) => {
 
-          // Deposit record
           await tx.deposit.create({
             data: {
-             id: randomUUID(),
-
+              id: randomUUID(),
               user_id: submission.user_id,
               amount,
               net_amount: amount,
@@ -216,9 +431,6 @@ class DepositScannerService {
             }
           });
 
-        
-
-          // Wallet credit
           await tx.wallet.upsert({
             where: { user_id: submission.user_id },
             update: {
@@ -230,38 +442,31 @@ class DepositScannerService {
             }
           });
 
-          // Transaction log
           await tx.transaction.create({
             data: {
-             id: randomUUID(),
-
+              id: randomUUID(),
               user_id: submission.user_id,
               type: "deposit",
               gross_amount: amount,
               net_amount: amount,
               status: "confirmed",
-              reference_id: txHash,
+              reference_id: txHash
             }
           });
 
-          // Mark submission confirmed
           await tx.depositSubmission.update({
             where: { id: submission.id },
             data: { status: "CONFIRMED" }
           });
 
-          // Mark blockchain tx used
           await tx.blockchainDeposit.update({
             where: { tx_hash: txHash },
             data: { is_used: true }
           });
 
-        }, {
-          timeout: 15000 // 15 seconds timeout for S3 upload + DB operations
         });
 
         console.log("✅ Deposit Credited to:", submission.user_id);
-
       }
 
     } catch (err) {
