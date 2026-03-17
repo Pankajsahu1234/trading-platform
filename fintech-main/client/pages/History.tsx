@@ -385,9 +385,11 @@ export default function History() {
                       {formatCurrency(txn.amount)}
                     </span>
                     <span
-                      className={`text-xs font-semibold px-2 py-0.5 rounded capitalize ${
+                      className={`text-xs font-semibold px-2 py-0.5 rounded lowercase first-letter:capitalize ${
                         txn.status?.toLowerCase() === "completed" ||
-                        txn.status?.toLowerCase() === "success"
+                        txn.status?.toLowerCase() === "success"  ||
+                        txn.status?.toLowerCase() === "confirmed"
+
                           ? "bg-profit/20 text-profit"
                           : txn.status?.toLowerCase() === "pending"
                           ? "bg-warning/20 text-warning"

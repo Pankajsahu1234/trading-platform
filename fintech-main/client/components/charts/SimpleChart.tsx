@@ -110,23 +110,45 @@ const isPositive = true; // since these are fixed increments
   return (
     <GlassCard heavy className={`p-6 flex flex-col gap-4 ${height}`}>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold">{title}</h3>
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground">Current Value</p>
-            <p className="text-lg font-bold text-profit">
-              ${displayedCurrentValue.toLocaleString()}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground">Profit Change</p>
-            <p className={`text-lg font-bold ${isPositive ? 'text-profit' : 'text-red-500'}`}>
-              {isPositive ? '+' : ''}{changePercent}%
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+  {/* LEFT */}
+  <div className="min-w-0">
+    <h3 className="text-lg sm:text-xl font-bold">
+      {title}
+    </h3>
+  </div>
+
+  {/* RIGHT */}
+  <div className="flex justify-between sm:justify-end gap-6 w-full sm:w-auto">
+
+    {/* Current Value */}
+    <div className="text-left sm:text-right">
+      <p className="text-xs text-muted-foreground mb-1">
+        Current Value
+      </p>
+      <p className="text-base sm:text-lg font-bold text-primary whitespace-nowrap">
+        ${displayedCurrentValue.toLocaleString()}
+      </p>
+    </div>
+
+    {/* Profit Change */}
+    <div className="text-left sm:text-right">
+      <p className="text-xs text-muted-foreground mb-1">
+        Profit Change
+      </p>
+      <p
+        className={`text-base sm:text-lg font-bold whitespace-nowrap ${
+          isPositive ? "text-green-400" : "text-red-500"
+        }`}
+      >
+        {isPositive ? "+" : ""}
+        {changePercent}%
+      </p>
+    </div>
+
+  </div>
+</div>
 
       {/* Chart */}
       <div className="flex-1 relative">

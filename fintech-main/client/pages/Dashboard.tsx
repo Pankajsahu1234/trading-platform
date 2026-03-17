@@ -130,7 +130,8 @@ export default function Dashboard() {
               <SimpleChart
                 data={investmentGrowthData}
                 title="Investment Growth Chart"
-                height="h-80"
+                // height="h-80"
+                height="h-64 sm:h-72 md:h-80"
                 currentValue={displayBalance.mainWallet}
               />
             )}

@@ -1,4 +1,5 @@
-import { useState } from "react";
+// import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -20,7 +21,7 @@ import {
   Sun,
   Bell,
   Moon,
-  User,
+  User,CheckCheck, X
 } from "lucide-react";
 
 interface SidebarProps {
@@ -85,6 +86,19 @@ export function Sidebar({
   const { setActivationModalOpen } = useApp();
   const { toast } = useToast();
   const [isCheckingRobotStatus, setIsCheckingRobotStatus] = useState(false);
+  
+  const [notifOpen, setNotifOpen] = useState(false);
+const notifRef = useRef<HTMLDivElement>(null);
+
+useEffect(() => {
+  function handleClickOutside(e: MouseEvent) {
+    if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+      setNotifOpen(false);
+    }
+  }
+  if (notifOpen) document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, [notifOpen]);
 
   const navigateWithExistingGuards = (href: string, label: string) => {
     if (
@@ -211,10 +225,43 @@ export function Sidebar({
         <div className="p-4 border-t border-white/10 flex flex-col gap-1">
           {/* Mobile-only: utility buttons inside sidebar */}
           <div className="lg:hidden flex flex-col gap-1 mb-2">
-            <button className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-sidebar-accent transition-colors">
-              <Bell size={18} />
-              Notifications
-            </button>
+           
+           <div ref={notifRef} className="relative">
+  <button
+    onClick={() => setNotifOpen((v) => !v)}
+    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-sidebar-accent transition-colors"
+  >
+    <Bell size={18} />
+    Notifications
+    <span className="ml-auto text-xs bg-white/10 text-muted-foreground px-2 py-0.5 rounded-full">0</span>
+  </button>
+
+  {notifOpen && (
+    <div className="absolute bottom-full left-0 right-0 mb-2 bg-background border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+        <div className="flex items-center gap-2">
+          <Bell size={14} className="text-muted-foreground" />
+          <span className="text-sm font-semibold">Notifications</span>
+        </div>
+        <button onClick={() => setNotifOpen(false)} className="p-1 rounded-lg hover:bg-card transition-colors text-muted-foreground hover:text-foreground">
+          <X size={14} />
+        </button>
+      </div>
+      <div className="flex flex-col items-center gap-3 py-8 px-6 text-center">
+        <div className="p-3 rounded-full bg-card border border-white/10">
+          <CheckCheck size={20} className="text-muted-foreground opacity-60" />
+        </div>
+        <p className="text-sm font-semibold">You're all caught up!</p>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          No new notifications right now. We'll let you know when something arrives.
+        </p>
+      </div>
+      <div className="px-4 py-3 border-t border-white/10 bg-card/30">
+        <p className="text-xs text-muted-foreground text-center">Notifications are enabled for your account</p>
+      </div>
+    </div>
+  )}
+</div>
 
             <button
               onClick={() => onToggleDarkMode(!isDarkMode)}
