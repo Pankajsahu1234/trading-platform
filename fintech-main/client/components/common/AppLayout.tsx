@@ -15,6 +15,7 @@ export function AppLayout() {
   });
   const { isAuthenticated, user } = useAuth();
   const { setActivationModalOpen, hasSkippedActivation } = useApp();
+  
 
   useEffect(() => {
     localStorage.setItem("appDarkMode", JSON.stringify(isDarkMode));
@@ -48,9 +49,14 @@ export function AppLayout() {
   return (
     <div className="flex w-full h-full transition-colors duration-300 relative">
       <TradingBackground isDarkMode={isDarkMode} />
-      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-      <div className="flex-1 flex flex-col min-h-screen relative z-10">
-        <Header isDarkMode={isDarkMode} onToggleDarkMode={setIsDarkMode} />
+      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(prev => !prev)} isDarkMode={isDarkMode} onToggleDarkMode={setIsDarkMode} />
+
+      <div className="flex-1 flex flex-col min-h-screen relative z-20">
+        <Header
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={setIsDarkMode}
+          onSidebarToggle={() => setSidebarOpen((prev) => !prev)} // 👈
+        />
         <main className="flex-1 transition-colors duration-300">
           <Outlet />
         </main>

@@ -125,15 +125,15 @@ export default function App() {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <AuthProvider>
-          <WalletProvider>
-            <AppProvider>
+          <AuthProvider>
+            <WalletProvider>
+              <AppProvider>
               <BrowserRouter>
                 <AppRoutes />
               </BrowserRouter>
-            </AppProvider>
-          </WalletProvider>
-        </AuthProvider>
+              </AppProvider>
+            </WalletProvider>
+          </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

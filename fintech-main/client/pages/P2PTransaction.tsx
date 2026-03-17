@@ -234,7 +234,7 @@ export default function P2PTransaction() {
                 <label className="block text-sm font-semibold mb-2">
                   Receiver Email / Phone / User ID
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     value={identifier}
@@ -246,7 +246,7 @@ export default function P2PTransaction() {
                   <button
                     type="submit"
                     disabled={searching || receiver !== null}
-                    className="bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-primary-foreground font-semibold px-6 py-3 rounded-lg transition-all flex items-center gap-2"
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-primary-foreground font-semibold px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2"
                   >
                     {searching ? (
                       <>

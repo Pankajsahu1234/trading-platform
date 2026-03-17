@@ -17,11 +17,17 @@ import {
   Bot,
   Send,
   Loader2,
+  Sun,
+  Bell,
+  Moon,
+  User,
 } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
+  isDarkMode: boolean;
+  onToggleDarkMode: (isDark: boolean) => void;
 }
 
 const navItems = [
@@ -67,7 +73,12 @@ const navItems = [
   },
 ];
 
-export function Sidebar({ isOpen, onToggle }: SidebarProps) {
+export function Sidebar({
+  isOpen,
+  onToggle,
+  isDarkMode,
+  onToggleDarkMode,
+}: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user } = useAuth();
@@ -92,49 +103,46 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
     }
   };
 
- const handleRobotActivationClick = async (href: string) => {
-  if (isCheckingRobotStatus) return;
+  const handleRobotActivationClick = async (href: string) => {
+    if (isCheckingRobotStatus) return;
 
-  try {
-    setIsCheckingRobotStatus(true);
+    try {
+      setIsCheckingRobotStatus(true);
 
-    const response = await apiClient.get<{
-      success: boolean;
-      data: {
-        robot_status: string;
-        isExpired: boolean;
-        activation_timestamp: string | null;
-        expiry_date: string | null;
-      };
-    }>("/robot/status");
+      const response = await apiClient.get<{
+        success: boolean;
+        data: {
+          robot_status: string;
+          isExpired: boolean;
+          activation_timestamp: string | null;
+          expiry_date: string | null;
+        };
+      }>("/robot/status");
 
-    // ✅ Correct field name: robot_status, not status
-    const robotStatus = response.data?.data?.robot_status?.toUpperCase();
-    const isExpired = response.data?.data?.isExpired;
+      // ✅ Correct field name: robot_status, not status
+      const robotStatus = response.data?.data?.robot_status?.toUpperCase();
+      const isExpired = response.data?.data?.isExpired;
 
-    if (robotStatus === "ACTIVE" && !isExpired) {
-      // Robot active hai — directly page pe le jao
-      navigate(href);
-      if (window.innerWidth < 1024) onToggle();
-      return;
+      if (robotStatus === "ACTIVE" && !isExpired) {
+        // Robot active hai — directly page pe le jao
+        navigate(href);
+        if (window.innerWidth < 1024) onToggle();
+        return;
+      }
+
+      // Inactive ya expired — activation page pe le jao
+      navigateWithExistingGuards(href, "Activate Robot");
+    } catch (_error) {
+      // Error aaye tab bhi page pe le jao, block mat karo
+      navigateWithExistingGuards(href, "Activate Robot");
+    } finally {
+      setIsCheckingRobotStatus(false);
     }
-
-    // Inactive ya expired — activation page pe le jao
-    navigateWithExistingGuards(href, "Activate Robot");
-
-  } catch (_error) {
-    // Error aaye tab bhi page pe le jao, block mat karo
-    navigateWithExistingGuards(href, "Activate Robot");
-  } finally {
-    setIsCheckingRobotStatus(false);
-  }
-};
-
- 
+  };
 
   const handleNav = (href: string, label: string) => {
     if (label === "Activate Robot") {
-       void handleRobotActivationClick(href);
+      void handleRobotActivationClick(href);
       return;
     }
 
@@ -143,14 +151,6 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile toggle */}
-      <button
-        onClick={onToggle}
-        className="fixed top-4 left-4 z-40 lg:hidden bg-card/80 p-2 rounded-lg border border-white/10 hover:bg-card transition-colors duration-300"
-      >
-        <Menu size={20} />
-      </button>
-
       {/* Overlay */}
       {isOpen && (
         <div
@@ -208,7 +208,36 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-white/10 flex flex-col gap-1">
+          {/* Mobile-only: utility buttons inside sidebar */}
+          <div className="lg:hidden flex flex-col gap-1 mb-2">
+            <button className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-sidebar-accent transition-colors">
+              <Bell size={18} />
+              Notifications
+            </button>
+
+            <button
+              onClick={() => onToggleDarkMode(!isDarkMode)}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-sidebar-accent transition-colors"
+            >
+              {isDarkMode ? (
+                <Sun size={18} className="text-amber-400" />
+              ) : (
+                <Moon size={18} className="text-indigo-500" />
+              )}
+              {isDarkMode ? "Light Mode" : "Dark Mode"}
+            </button>
+
+            <button className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-sidebar-accent transition-colors"
+             onClick={() => { navigate("/settings"); onToggle(); }}>
+              <User size={18} />
+              Profile
+            </button>
+          </div>
+
+          {/* Divider between utility + logout */}
+          <div className="lg:hidden border-t border-white/10 mb-1" />
+
           <button
             onClick={() => {
               logout();
