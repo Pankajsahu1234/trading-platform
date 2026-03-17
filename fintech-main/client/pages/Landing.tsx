@@ -785,7 +785,7 @@ export default function Landing() {
                     </label>
                     <input
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="Your Name"
                       className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#C9A84C] transition-all ${
                         isDarkMode
                           ? "bg-[#0A1628] border-white/10 text-white placeholder-[#3D5068]"
@@ -799,7 +799,7 @@ export default function Landing() {
                     </label>
                     <input
                       type="email"
-                      placeholder="john@example.com"
+                      placeholder="your.email@example.com"
                       className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#C9A84C] transition-all ${
                         isDarkMode
                           ? "bg-[#0A1628] border-white/10 text-white placeholder-[#3D5068]"
