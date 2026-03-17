@@ -69,11 +69,7 @@ export function Header({
                 className="p-2 hover:bg-card rounded-lg transition-all duration-300"
                 title="Profile"
                 onClick={() => {
-   alert("clicked!"); 
-    console.log("Current location:", window.location.pathname);
-    navigate("/settings");
-    console.log("navigate() called");
-  }}
+                navigate("/settings");  }}
               >
                 <User size={20} className="text-muted-foreground" />
               </button>

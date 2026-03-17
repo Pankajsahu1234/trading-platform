@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import { GlassCard } from "../common/GlassCard";
 import { useState } from "react";
 
@@ -34,6 +35,7 @@ export function SimpleChart({
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
   const priceRange = maxPrice - minPrice || 1;
+  const { user } = useAuth();
   
   // Add padding to the range for better visualization
   const padding = priceRange * 0.1;
@@ -102,7 +104,7 @@ if (displayedCurrentValue < 1000) {
   percentBase = 9;
 }
 
-const changePercent = (percentBase / 30).toFixed(2);
+const changePercent = user.robotStatus === "ACTIVE" ?  (percentBase / 30).toFixed(2) : 0; // Simulated change percentage based on robot status
 const isPositive = true; // since these are fixed increments
 
   return (
