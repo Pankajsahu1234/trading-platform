@@ -25,6 +25,7 @@ import withdrawalRoutes from './routes/withdrawalRoutes.js'
 import transferRoutes from './routes/transferRoutes.js'
 import adminDashboardRoutes from "./routes/adminDashboard.routes.js";
 import cronJobs from './config/cronJobs.js'
+import forgotPasswordRoutes from './routes/forgetPasswordRoutes.js'
 
 const app = express();
 const prisma = new PrismaClient();
@@ -115,6 +116,8 @@ app.use("/api/admin", adminDepositRoutes);
 app.use("/api/admin", adminTransactionRoutes);
 app.use("/api/admin", adminAuthRoutes);
 app.use("/api/admin", adminDashboardRoutes);
+app.use("/api/password", forgotPasswordRoutes);
+
 
 // app.use('/api/wallets', walletRoutes);
 // app.use('/api/transactions', transactionRoutes);
