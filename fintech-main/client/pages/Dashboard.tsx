@@ -263,7 +263,7 @@ export default function Dashboard() {
             <h3 className="text-xl font-semibold">Account Information</h3>
             <StatusBadge
               status={
-                user?.robotStatus === "INACTIVE" ? "inactive" : "active"
+                user?.robotStatus === "inactive" ? "inactive" : "active"
               }
             />
           </div>

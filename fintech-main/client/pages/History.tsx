@@ -30,7 +30,7 @@ const FILTER_TYPES = [
   "deposit",
   "withdrawal",
   "profit",
-  "investment",
+  // "investment",
   "transfer",
 ];
 
@@ -198,7 +198,7 @@ export default function History() {
           if (filter === "withdrawal") return type.includes("withdrawal");
           if (filter === "profit")
             return type.includes("interest") || type.includes("profit");
-          if (filter === "investment") return type.includes("investment");
+          // if (filter === "investment") return type.includes("investment");
           if (filter === "transfer") return type.includes("transfer");
           return false;
         }),

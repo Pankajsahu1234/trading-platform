@@ -377,20 +377,20 @@ interface StartSmartInvestBetterProps {
 const steps = [
   {
     step: 1,
-    title: "Easy Onboarding",
-    description: "Register and verify your account in minutes.",
+    title: "Quick Setup",
+    description: "Sign up and complete verification in minutes.",
     icon: CheckCircle,
   },
   {
     step: 2,
-    title: "Smart Investments",
-    description: "Fund your account and choose the right investment index.",
+    title: "Invest Smartly",
+    description: "Add funds and select investment options that match your goals.",
     icon: Wallet,
   },
   {
     step: 3,
-    title: "Achieve More",
-    description: "Grow your portfolio with confidence and transparency.",
+    title: "Track Your Growth",
+    description: "Monitor your progress and grow your wealth with confidence.",
     icon: TrendingUp,
   },
 ];

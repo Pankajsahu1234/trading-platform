@@ -215,11 +215,11 @@ export default function Withdraw() {
                     <span
                       className={`absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                         status.isOpen
-                          ? "bg-profit/20 text-profit"
-                          : "bg-loss/20 text-loss"
+                          // ? "bg-profit/20 text-profit"
+                          // : "bg-loss/20 text-loss"
                       }`}
                     >
-                      {status.isOpen ? "Open" : "Closed"}
+                      {/* {status.isOpen ? "Open" : "Closed"} */}
                     </span>
 
                     <p className="font-semibold mb-1 pr-16 text-sm sm:text-base">
@@ -230,7 +230,7 @@ export default function Withdraw() {
                     <p className="text-xs text-muted-foreground">
                       {type === "PROFIT"
                         ? "Available: 1st – 5th of each month"
-                        : "Available: 28th of each month only"}
+                        : "Available: 28th of each month"}
                     </p>
                   </button>
                 );
@@ -240,11 +240,11 @@ export default function Withdraw() {
 
           {/* ── Window Status Banner ── */}
           {!isWindowOpen ? (
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-loss/10 border border-loss/30">
-              <Lock size={18} className="text-loss flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-yellow/80 border border-yellow">
+              <Lock size={18} className="text-white flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-loss">
-                  Withdrawal Window Closed
+                <p className="text-sm font-semibold text-white">
+                  Note:
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   {withdrawType === "PROFIT"
