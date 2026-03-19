@@ -71,7 +71,7 @@ function emailVerificationTemplate(otp) {
                         </td>
                         <td style="padding-left:13px;vertical-align:middle;">
                           <div style="font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:#f0c040;letter-spacing:3px;line-height:1.1;">TIMO<span style="color:#ffffff;"> FX</span></div>
-                          <div style="font-size:9px;color:#4a5568;letter-spacing:4px;text-transform:uppercase;margin-top:1px;">Trading Platform</div>
+                          <div style="font-size:9px;color:#4a5568;letter-spacing:4px;text-transform:uppercase;margin-top:1px;">Investment Platform</div>
                         </td>
                       </tr>
                     </table>
@@ -128,7 +128,7 @@ function emailVerificationTemplate(otp) {
                             </td>
                             <td style="padding-left:10px;">
                               <div style="font-size:12px;font-weight:600;color:#e2e8f0;margin-bottom:4px;letter-spacing:0.5px;">Security Notice</div>
-                              <div style="font-size:12px;color:#a0aec0;line-height:1.7;">Never share this OTP with anyone. If you did not initiate this request, please ignore this email and your account will be safe .</div>
+                              <div style="font-size:12px;color:#a0aec0;line-height:1.7;">Never share this OTP with anyone. If you did not initiate this request, please ignore this email, your account remains secure.</div>
                             </td>
                           </tr>
                         </table>
