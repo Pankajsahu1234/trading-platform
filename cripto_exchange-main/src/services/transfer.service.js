@@ -55,115 +55,119 @@ class TransferService {
 
       // Execute transfer in a transaction
       const result = await prisma.$transaction(async (tx) => {
-        // Get sender wallet with lock
-        const senderWallet = await tx.wallet.findUnique({
-          where: { user_id: senderId },
+          // Get sender wallet with lock
+          const senderWallet = await tx.wallet.findUnique({
+            where: { user_id: senderId },
         });
 
-        if (!senderWallet) {
+          if (!senderWallet) {
           throw new Error('Sender wallet not found');
-        }
+          }
 
-        // Check sufficient balance
+          // Check sufficient balance
         const senderBalance = Number(senderWallet.main_balance);
-        if (senderBalance < transferAmount) {
+          if (senderBalance < transferAmount) {
           throw new Error(`Insufficient balance. Available: ${senderBalance}, Required: ${transferAmount}`);
-        }
+          }
 
-        // Get receiver wallet
-        const receiverWallet = await tx.wallet.findUnique({
-          where: { user_id: receiver.id },
+          // Get receiver wallet
+          const receiverWallet = await tx.wallet.findUnique({
+            where: { user_id: receiver.id },
         });
 
-        if (!receiverWallet) {
+          if (!receiverWallet) {
           throw new Error('Receiver wallet not found');
-        }
+          }
 
-        // Deduct from sender
-        const updatedSenderWallet = await tx.wallet.update({
-          where: { user_id: senderId },
-          data: {
-            main_balance: {
-              decrement: transferAmount,
+          // Deduct from sender
+          const updatedSenderWallet = await tx.wallet.update({
+            where: { user_id: senderId },
+            data: {
+              main_balance: {
+                decrement: transferAmount,
+              },
             },
-          },
         });
 
-        // Add to receiver
-        const updatedReceiverWallet = await tx.wallet.update({
-          where: { user_id: receiver.id },
-          data: {
-            main_balance: {
-              increment: transferAmount,
+          // Add to receiver
+          const updatedReceiverWallet = await tx.wallet.update({
+            where: { user_id: receiver.id },
+            data: {
+              main_balance: {
+                increment: transferAmount,
+              },
             },
-          },
         });
 
-        // Create transfer record
-        const transfer = await tx.internalTransfer.create({
-          data: {
-           id: randomUUID(),
-            id: randomUUID(),
-            sender_id: senderId,
-            receiver_id: receiver.id,
-            amount: transferAmount,
-            status: 'SUCCESS',
-            description: description,
-          },
+          // Create transfer record
+          const transfer = await tx.internalTransfer.create({
+            data: {
+              id: randomUUID(),
+              id: randomUUID(),
+              sender_id: senderId,
+              receiver_id: receiver.id,
+              amount: transferAmount,
+              status: 'SUCCESS',
+              description: description,
+            },
         });
 
-        // Create transaction records for both parties
-        // Sender transaction (debit)
-        await tx.transaction.create({
-          data: {
-           id: randomUUID(),
-            id: randomUUID(),
-            user_id: senderId,
-            type: 'USER_TO_USER_TRANSFER_SENT',
-            source_wallet: 'MAIN_WALLET',
-            destination_wallet: 'USER_WALLET',
-            gross_amount: transferAmount,
-            fee_amount: 0,
-            penalty_amount: 0,
-            net_amount: transferAmount,
-            status: 'SUCCESS',
-            reference_id: transfer.id,
+          // Create transaction records for both parties
+          // Sender transaction (debit)
+          await tx.transaction.create({
+            data: {
+              id: randomUUID(),
+              id: randomUUID(),
+              user_id: senderId,
+              type: 'USER_TO_USER_TRANSFER_SENT',
+              source_wallet: 'MAIN_WALLET',
+              destination_wallet: 'USER_WALLET',
+              gross_amount: transferAmount,
+              fee_amount: 0,
+              penalty_amount: 0,
+              net_amount: transferAmount,
+              status: 'SUCCESS',
+              reference_id: transfer.id,
             description: `Transfer sent to ${receiver.name || receiver.email}${description ? ': ' + description : ''}`,
-          },
+            },
         });
 
-        // Receiver transaction (credit)
-        await tx.transaction.create({
-          data: {
-           id: randomUUID(),
-            id: randomUUID(),
-            user_id: receiver.id,
-            type: 'USER_TO_USER_TRANSFER_RECEIVED',
-            source_wallet: 'USER_WALLET',
-            destination_wallet: 'MAIN_WALLET',
-            gross_amount: transferAmount,
-            fee_amount: 0,
-            penalty_amount: 0,
-            net_amount: transferAmount,
-            status: 'SUCCESS',
-            reference_id: transfer.id,
+          // Receiver transaction (credit)
+          await tx.transaction.create({
+            data: {
+              id: randomUUID(),
+              id: randomUUID(),
+              user_id: receiver.id,
+              type: 'USER_TO_USER_TRANSFER_RECEIVED',
+              source_wallet: 'USER_WALLET',
+              destination_wallet: 'MAIN_WALLET',
+              gross_amount: transferAmount,
+              fee_amount: 0,
+              penalty_amount: 0,
+              net_amount: transferAmount,
+              status: 'SUCCESS',
+              reference_id: transfer.id,
             description: `Transfer received from user${description ? ': ' + description : ''}`,
-          },
+            },
         });
 
-        return {
-          transfer,
-          senderBalance: Number(updatedSenderWallet.main_balance),
-          receiverBalance: Number(updatedReceiverWallet.main_balance),
-          receiver: {
-            id: receiver.id,
-            name: receiver.name,
-            email: receiver.email,
-          },
-        };
-      });
+          return {
+            transfer,
+            senderBalance: Number(updatedSenderWallet.main_balance),
+            receiverBalance: Number(updatedReceiverWallet.main_balance),
+            receiver: {
+              id: receiver.id,
+              name: receiver.name,
+              email: receiver.email,
+            },
+          }
+        },
+        {
+          timeout: 30000, // 30 seconds instead of default 5s
+        },
+      )
 
-      return result;
+      return result
     } catch (error) {
       console.error('Transfer Service Error:', error);
       throw error;

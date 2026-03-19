@@ -22,6 +22,9 @@ class TransferController {
       if (!amount || amount <= 0) {
         return errorResponse(res, 'Valid amount is required', 400);
       }
+      if (amount < 25) {
+        return errorResponse(res, 'Amount must be at least $25', 400);
+      }
 
       // Execute transfer
       const result = await transferService.executeTransfer(

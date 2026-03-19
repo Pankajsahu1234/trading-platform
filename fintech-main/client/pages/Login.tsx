@@ -16,22 +16,22 @@ export default function Login() {
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const result = await login(email, password);
-      
+  e.preventDefault();
+  try {
+    const result = await login(email, password);
+
       // Check if 2FA is required
-      if (result?.requires2FA && result?.tempToken) {
-        navigate("/verify-2fa", { state: { tempToken: result.tempToken } });
-        return;
-      }
-      
+    if (result?.requires2FA && result?.tempToken) {
+      navigate("/verify-2fa", { state: { tempToken: result.tempToken } });
+      return;
+    }
+
       // Otherwise navigate to dashboard
       navigate("/dashboard");
     } catch (err) {
       // Error is handled by context
-    }
-  };
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative">
@@ -106,6 +106,16 @@ export default function Login() {
               <LogIn size={18} />
               {isLoading ? "Signing in..." : "Sign In"}
             </button>
+            {/* Forgot password */}
+            <div className="flex justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary hover:underline font-semibold"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
           </form>
 
           

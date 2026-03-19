@@ -27,6 +27,8 @@ import Referral from "@/pages/Referral";
 import History from "@/pages/History";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +68,22 @@ function AppRoutes() {
         element={
           <AuthRoute>
             <Login />
+          </AuthRoute>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <AuthRoute>
+            <ForgotPassword />
+          </AuthRoute>
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          <AuthRoute>
+            <ResetPassword />
           </AuthRoute>
         }
       />
