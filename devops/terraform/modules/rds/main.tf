@@ -20,6 +20,14 @@ resource "aws_security_group" "rds" {
     security_groups = [var.ecs_sg_id]
   }
 
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [var.bastion_sg_id]
+    description     = "Allow MySQL from EC2 bastion"
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -51,7 +59,7 @@ resource "aws_db_instance" "main" {
   vpc_security_group_ids = [aws_security_group.rds.id]
 
   multi_az                    = false
-  publicly_accessible         = true
+  publicly_accessible         = false
   skip_final_snapshot         = false
   final_snapshot_identifier   = "${var.project}-${var.environment}-final-snapshot"
   deletion_protection         = true

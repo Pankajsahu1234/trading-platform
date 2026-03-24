@@ -18,4 +18,4 @@ email_user  = "noreply@timofx.com"
 email_pass  = "7L8XHC9CBQB66TJK"
 email_from  = "noreply@timofx.com"
 
-security_alert_email = "fxtimo37@gmail.com"
+security_alert_email = "timofxtrading@proton.me"

@@ -7,4 +7,8 @@ resource "aws_secretsmanager_secret" "app" {
 resource "aws_secretsmanager_secret_version" "app" {
   secret_id     = aws_secretsmanager_secret.app.id
   secret_string = jsonencode(var.secrets)
+
+  lifecycle {
+    ignore_changes = [secret_string]
+  }
 }

@@ -100,7 +100,9 @@ resource "aws_cloudfront_distribution" "fintech" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = "arn:aws:acm:us-east-1:310651341129:certificate/48ebc85b-6068-4ade-9397-c644801205e8"
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 
   tags = { Project = var.project, Environment = var.environment }
@@ -154,7 +156,9 @@ resource "aws_cloudfront_distribution" "admin" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = "arn:aws:acm:us-east-1:310651341129:certificate/48ebc85b-6068-4ade-9397-c644801205e8"
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 
   tags = { Project = var.project, Environment = var.environment }

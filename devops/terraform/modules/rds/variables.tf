@@ -15,3 +15,9 @@ variable "db_password" {
   type      = string
   sensitive = true
 }
+
+variable "bastion_sg_id" {
+  description = "Security group ID of EC2 bastion host"
+  type        = string
+  default     = "sg-0b66658d29d0d87c1"
+}
