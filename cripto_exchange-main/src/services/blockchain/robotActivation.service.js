@@ -49,7 +49,7 @@ class RobotActivationService {
     where: {
       tx_hash: submission.tx_hash,
       is_used: false,
-      amount: 30
+      amount: { gte: 30 }
     }
   });
 
