@@ -46,22 +46,30 @@ const withdrawalController = {
       return errorResponse(res, error.message, 404);
     }
   },
+  
 
+  
   /**
    * Request withdrawal
    * POST /api/withdrawals/request
-   * Body: { type: "PROFIT" | "PRINCIPAL", amount: number, walletAddress: string }
+   * Body: { type: "PROFIT" | "PRINCIPAL", amount: number, walletAddress: string, transactionCode: string }
    */
   requestWithdrawal: async (req, res) => {
     try {
       const userId = req.user.userId;
-      const { type, amount, walletAddress } = req.body;
+      const { type, amount, walletAddress, transactionCode } = req.body;
+      // validate the window is open or not 
+      const { isOpen } = getWithdrawalWindowStatus(type);
 
+      if (!isOpen) {
+        return errorResponse(res, `Withdrawal window for ${type} is currently closed.`, 400);
+      }
       const result = await withdrawalService.requestWithdrawal(
         userId,
         type,
         amount,
-        walletAddress
+        walletAddress,
+        transactionCode
       );
 
       return successResponse(
@@ -183,5 +191,19 @@ const withdrawalController = {
     }
   }
 };
+function getWithdrawalWindowStatus(type) {
+  const now = new Date();
+  const day = now.getDate();
+
+  if (type === 'PROFIT') {
+    const isOpen = day >= 1 && day <= 5;
+    return { isOpen };
+  } else {
+    // PRINCIPAL — only on the 28th
+    const isOpen = day === 28;
+    return { isOpen };
+  }
+}
+
 
 export default withdrawalController;

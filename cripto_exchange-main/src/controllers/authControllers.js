@@ -8,12 +8,14 @@ import { nanoid } from 'nanoid'
 import { generateOTP } from '../utils/otpGenerator.js'
 import {
   emailVerificationTemplate,
+  transactionCodeEmailTemplate,
   twoFactorSetupTemplate,
   twoFactorLoginTemplate,
 } from '../utils/emailTemplates.js'
 import { sendEmail } from '../services/emailService.js'
 import { handleReferralOnRegister } from '../controllers/refralsControllers.js'
 import {performance} from 'perf_hooks'
+import crypto from 'crypto';
 const prisma = new PrismaClient()
 
 async function register(req, res) {
@@ -106,6 +108,39 @@ async function verifyEmail(req, res) {
   if (!user || user.email_verify_token !== otp) {
     return res.status(400).json({ error: 'Invalid OTP' })
   }
+  // Generate unique transaction code
+
+  let transcode ;
+  // Verify uniqueness and create
+  await prisma.$transaction(async (tx) => {
+      let transactionCode;
+      let exists = true;
+
+      // Retry until unique
+      while (exists) {
+        transactionCode = generateTransactionCode();
+        transcode = transactionCode;
+        const existing = await tx.transactionCode.findUnique({
+          where: { transactionCode }
+        });
+
+        if (!existing) {
+          exists = false;
+        }
+      }
+
+      await tx.transactionCode.create({
+        data: {
+          userId: user.id,
+          transactionCode: transactionCode,
+        }
+      });
+});
+
+  // Send transaction code email
+  const html = transactionCodeEmailTemplate(transcode, user.name);
+  await sendEmail(email, 'Your Transaction Code - TIMO FX', html);
+
   // Verify email
   await prisma.user.update({
     where: { email },
@@ -116,9 +151,12 @@ async function verifyEmail(req, res) {
     },
   })
 
-  res.json({ message: 'Email verified successfully' })
+  res.json({ message: 'Email verified successfully. Transaction code sent.' })
 }
 
+function  generateTransactionCode() {
+  return 'TX' + crypto.randomBytes(7).toString('hex').substring(0, 13).toUpperCase();
+}
 async function resendOTP(req, res) {
   try {
     const { email } = req.body

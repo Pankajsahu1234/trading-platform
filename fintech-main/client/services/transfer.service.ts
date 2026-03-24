@@ -21,6 +21,7 @@ export interface TransferRequest {
   receiver: string;
   amount: number;
   description?: string;
+  transactionCode: string;
 }
 
 export interface TransferResponse {

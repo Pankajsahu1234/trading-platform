@@ -12,7 +12,7 @@ class TransferController {
   async executeTransfer(req, res) {
     try {
       const senderId = req.user.userId;
-      const { receiver, amount, description } = req.body;
+      const { receiver, amount, description,transactionCode } = req.body;
 
       // Validation
       if (!receiver) {
@@ -31,7 +31,8 @@ class TransferController {
         senderId,
         receiver,
         amount,
-        description
+        description,
+        transactionCode
       );
 
       return successResponse(

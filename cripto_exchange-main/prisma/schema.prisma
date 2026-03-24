@@ -215,6 +215,7 @@ model User {
   UserRole                                            UserRole[]
   Wallet                                              Wallet?
   Withdrawal                                          Withdrawal[]
+  transactionCode                                     TransactionCode?
 
   @@index([referral_rank_id], map: "User_referral_rank_id_fkey")
 }
@@ -254,6 +255,19 @@ model Wallet {
   User               User     @relation(fields: [user_id], references: [id])
 
   @@index([user_id])
+}
+
+model TransactionCode {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  transactionCode String   @unique
+  isInvalid       Boolean  @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([transactionCode])
 }
 
 model Withdrawal {

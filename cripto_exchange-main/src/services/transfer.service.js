@@ -12,7 +12,7 @@ class TransferService {
    * @param {string} description - Optional description
    * @returns {Promise<Object>} Transfer result
    */
-  async executeTransfer(senderId, receiverIdentifier, amount, description = null) {
+  async executeTransfer(senderId, receiverIdentifier, amount, description = null,transactionCode) {
     // Validate amount
     if (!amount || amount <= 0) {
       throw new Error('Transfer amount must be greater than 0');
@@ -20,6 +20,22 @@ class TransferService {
 
     // Convert amount to number
     const transferAmount = Number(amount);
+    // validate the transaction code is provided or not
+    if (!transactionCode || transactionCode.trim() === '') {
+        throw new Error('Transaction code is required');
+      }
+
+      // Validate transaction code
+      const tc = await prisma.transactionCode.findFirst({
+        where: {
+          userId: senderId,
+          transactionCode: transactionCode.trim(),
+          isInvalid: false
+        }
+      });
+      if (!tc) {
+        throw new Error('Invalid transaction code. Please provide the correct transaction code sent to your email.');
+      }
 
     try {
       // Find receiver by email, phone, or ID
