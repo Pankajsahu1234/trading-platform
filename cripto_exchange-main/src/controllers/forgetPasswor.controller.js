@@ -30,9 +30,8 @@ async function forgotPassword(req, res) {
 
     // Return generic message to prevent user enumeration
     if (!user) {
-      console.log('⚠️  User not found — returning generic response for security')
-      return res.status(200).json({
-        message: 'If this email is registered, an OTP has been sent.',
+      return res.status(400).json({
+        error: 'No user found with this email address. Please check and try again.',
       })
     }
 
