@@ -11,6 +11,7 @@ import {
   transactionCodeEmailTemplate,
   twoFactorSetupTemplate,
   twoFactorLoginTemplate,
+  transactionCodeOTPTemplate
 } from '../utils/emailTemplates.js'
 import { sendEmail } from '../services/emailService.js'
 import { handleReferralOnRegister } from '../controllers/refralsControllers.js'
@@ -412,6 +413,114 @@ async function refreshToken(req, res) {
     res.status(403).json({ error: 'Invalid refresh token' })
   }
 }
+async function regenerateTransactionCode(req, res) {
+  try {
+    const { userId } = req.user;
+    const { emailVerificationOTP, currentUserPassword } = req.body;
+
+    // 1. Get user
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // 2. Verify OTP
+    if (!user.email_verify_token || user.email_verify_token !== emailVerificationOTP) {
+      return res.status(400).json({ error: "Invalid or expired OTP" });
+    }
+    // 3. Verify Password
+    const isPasswordValid = await bcrypt.compare(
+      currentUserPassword,
+      user.password_hash
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Incorrect password" });
+    }
+
+    // 4. Check existing transaction code
+    const existing = await prisma.transactionCode.findUnique({
+      where: { userId },
+    });
+
+    let newCode;
+    let isUnique = false;
+
+    // 5. Generate unique transaction code
+    while (!isUnique) {
+      const generated = generateTransactionCode();
+
+      const duplicate = await prisma.transactionCode.findUnique({
+        where: { transactionCode: generated },
+      });
+
+      if (!duplicate) {
+        newCode = generated;
+        isUnique = true;
+      }
+    }
+
+    let result;
+
+    // 6. Create or Update
+    if (!existing) {
+      result = await prisma.transactionCode.create({
+        data: {
+          userId,
+          transactionCode: newCode,
+        },
+      });
+    } else {
+      result = await prisma.transactionCode.update({
+        where: { userId },
+        data: {
+          transactionCode: newCode,
+        },
+      });
+    }
+
+    // 7. Clear OTP after use (important )
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        email_verify_token: null,
+      },
+    });
+
+    // 8. Response
+    return res.json({
+      message:
+        "Transaction code generated successfully. Copy and store this code securely. You will not see this code again.",
+      transactionCode: result.transactionCode,
+    });
+
+  } catch (error) {
+    console.error(" Regenerate Transaction Code Error:", error);
+    return res.status(500).json({
+      error: "Failed to regenerate transaction code",
+    });
+  }
+}
+
+async function sendOTPEmailForTxCode(req, res) {
+  const useId = req.user.userId;
+  const user = await prisma.user.findUnique({ where: { id: useId } });
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  const otp = generateOTP();
+  await prisma.user.update({
+    where: { id: useId },
+    data: { email_verify_token: otp },
+  });
+  const html = transactionCodeOTPTemplate(otp, user.name);
+  await sendEmail(user.email, 'Your OTP for Transaction Code Regeneration', html);
+  return res.json({ message: 'OTP sent to email for transaction code regeneration' });
+}
+
 const generateReferralCode = () => {
   return nanoid(8) // 8 character unique code
 }
@@ -425,4 +534,6 @@ export {
   enable2FA,
   confirmEnable2FA,
   refreshToken,
+  regenerateTransactionCode,
+  sendOTPEmailForTxCode
 }

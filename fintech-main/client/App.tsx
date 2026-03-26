@@ -29,6 +29,7 @@ import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import RegenerateTransactionCode from "./pages/RegenerateTransactionCode";
 
 const queryClient = new QueryClient();
 
@@ -114,6 +115,10 @@ function AppRoutes() {
         <Route path="/referral" element={<Referral />} />
         <Route path="/history" element={<History />} />
         <Route path="/settings" element={<Settings />} />
+        <Route
+            path="/regenerate-transaction-code"
+            element={<RegenerateTransactionCode />}
+          />
         {/* 2FA setup pages - protected */}
         <Route path="/security/enable-2fa" element={<Enable2FA />} />
         <Route path="/security/confirm-2fa" element={<Confirm2FA />} />

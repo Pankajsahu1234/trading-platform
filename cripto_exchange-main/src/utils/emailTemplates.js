@@ -353,10 +353,134 @@ function transactionCodeEmailTemplate(code, name = 'User') {
 </html>
   `;
 }
+function transactionCodeOTPTemplate(otp, name = 'User') {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TIMO FX - Transaction Code OTP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body style="margin:0;padding:0;background-color:#070b12;font-family:'Inter',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#070b12;">
+    <tr>
+      <td align="center" style="padding:48px 16px;">
+        <table width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;">
+
+          <!-- PRE HEADER -->
+          <tr>
+            <td align="center" style="padding-bottom:20px;">
+              <span style="font-size:11px;color:#2a3050;letter-spacing:3px;text-transform:uppercase;">
+                Secure Verification · timofx.com
+              </span>
+            </td>
+          </tr>
+
+          <!-- CARD -->
+          <tr>
+            <td style="border-radius:24px;overflow:hidden;border:1px solid #1a2035;box-shadow:0 24px 80px rgba(0,0,0,0.7);">
+
+              <!-- HEADER -->
+              <div style="background:#070b12;height:130px;display:flex;align-items:center;justify-content:center;">
+                <div style="text-align:center;">
+                  <div style="font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:#f0c040;letter-spacing:3px;">
+                    TIMO <span style="color:#ffffff;">FX</span>
+                  </div>
+                  <div style="font-size:10px;color:#4a5568;letter-spacing:4px;">
+                    Investment Platform
+                  </div>
+                </div>
+              </div>
+
+              <!-- GOLD LINE -->
+              <div style="height:3px;background:linear-gradient(90deg,#7a5500,#c9a227,#f0c040,#c9a227,#7a5500);"></div>
+
+              <!-- BODY -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(160deg,#0f1420,#0c1018);">
+                <tr>
+                  <td style="padding:36px 44px 20px;">
+                    <h1 style="font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:#ffffff;margin:0 0 12px;">
+                      Transaction Code <span style="color:#f0c040;">Verification</span>
+                    </h1>
+
+                    <p style="font-size:14px;color:#6b7a9a;line-height:1.8;margin-bottom:24px;">
+                      Hi <strong style="color:#c8d0e0;">${name}</strong>,  
+                      you requested to regenerate your transaction code.
+                      Use the OTP below to verify your request.
+                    </p>
+
+                    <!-- OTP BOX -->
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="background:linear-gradient(135deg,#0e1520,#131c2b);border:1px solid #f0c04035;border-radius:20px;padding:24px;text-align:center;">
+                          <div style="font-size:10px;color:#3a4560;letter-spacing:4px;margin-bottom:10px;">
+                            VERIFICATION OTP
+                          </div>
+                          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:#f0c040;letter-spacing:12px;">
+                            ${otp}
+                          </div>
+                          <div style="margin-top:12px;font-size:11px;color:#6b7a9a;">
+                            Valid for a limited time
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- WARNING -->
+                <tr>
+                  <td style="padding:0 44px 30px;">
+                    <table width="100%">
+                      <tr>
+                        <td style="background:#0f1420;border:1px solid #ffffff20;border-radius:20px;padding:18px;">
+                          <div style="font-size:12px;color:#a0aec0;">
+                            ⚠️ Do not share this OTP with anyone.  
+                            If you did not request this, please secure your account immediately.
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- FOOTER -->
+                <tr>
+                  <td style="padding:20px 44px 30px;">
+                    <div style="font-size:11px;color:#6b7a9a;">
+                      © 2026 TIMO FX · Secure Trading Platform
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding-top:20px;">
+              <span style="font-size:11px;color:#1e2535;">
+                This is an automated message. Do not reply.
+              </span>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+
 
 export  {
   emailVerificationTemplate,
   twoFactorSetupTemplate,
   twoFactorLoginTemplate,
   transactionCodeEmailTemplate,
+  transactionCodeOTPTemplate
 };
