@@ -25,7 +25,7 @@ class CronJobs {
    * Runs at 00:00 (midnight) every day
    */
   scheduleDailyInterestCalculation() {
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('0 0 * * *', async () => {
       try {
         console.log('🕐 Starting daily interest calculation...');
         const startTime = Date.now();

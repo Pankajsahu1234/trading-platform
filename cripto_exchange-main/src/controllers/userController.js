@@ -159,7 +159,7 @@ async function getWalletBalance(req, res) {
       inscrease_percentage_referralBonus: 0,
       inscrease_referralBonus_positive: true,
 
-      totalInvestment: Number(wallet.investment_balance),
+      totalInvestment: Number(wallet.total_profit),
       inscrease_percentage_totalInvestment: 0,
       inscrease_percentage_totalInvestment_positive: true,
     });

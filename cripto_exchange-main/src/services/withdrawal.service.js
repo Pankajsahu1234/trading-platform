@@ -442,7 +442,7 @@ class WithdrawalService {
       const withdrawals = await prisma.withdrawal.findMany({
         where: { status: 'PENDING' },
         include: {
-          user: {
+          User: {
             select: {
               id: true,
               name: true,
@@ -455,8 +455,8 @@ class WithdrawalService {
 
       return withdrawals.map(w => ({
         id: w.id,
-        userName: w.user.name,
-        userEmail: w.user.email,
+        userName: w.User.name,
+        userEmail: w.User.email,
         withdrawalType: w.type,
         userWalletAddress: w.user_address,
         requestedAmount: parseFloat(w.requested_amount),
