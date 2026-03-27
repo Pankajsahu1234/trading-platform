@@ -38,7 +38,7 @@ class CronJobs {
         const endTime = Date.now();
         const duration = ((endTime - startTime) / 1000).toFixed(2);
         
-        console.log(`✅ Deposit to investment job completed in ${duration}s. Success: ${successful}/${results.length}`);
+        console.log(`✅ Deposit to investment job completed in ${duration}`)
       } catch (error) {
         console.error('❌ Deposit to investment job failed:', error);
       }
