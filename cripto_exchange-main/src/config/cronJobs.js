@@ -1,5 +1,7 @@
 import cron from 'node-cron';
 import investmentService from '../services/investment.service.js';
+import startMonthEndDeactivationJob from '../jobs/monthEndDeactivation.job.js';
+import startMonthStartReinvestmentJob from '../jobs/monthStartReinvestment.job.js';
 
 class CronJobs {
   /**
@@ -9,6 +11,12 @@ class CronJobs {
     // Daily interest calculation - runs at midnight every day (00:00)
     this.scheduleDailyInterestCalculation();
 
+    // 27th: deactivate all active investments
+    startMonthEndDeactivationJob();
+
+    // 28th: auto-reinvest from main wallet for robot-active users
+    startMonthStartReinvestmentJob();
+
     console.log('✅ Cron jobs initialized');
   }
 
@@ -17,7 +25,7 @@ class CronJobs {
    * Runs at 00:00 (midnight) every day
    */
   scheduleDailyInterestCalculation() {
-    cron.schedule('0 0 * * *', async () => {
+    cron.schedule('* * * * *', async () => {
       try {
         console.log('🕐 Starting daily interest calculation...');
         const startTime = Date.now();
