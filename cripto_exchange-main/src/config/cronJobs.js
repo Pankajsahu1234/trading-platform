@@ -28,7 +28,7 @@ class CronJobs {
    * Runs every 10 minutes
    */
   scheduleDepositToInvestment() {
-    cron.schedule('*/30 * * * * *', async () => {
+    cron.schedule('0 */10 * * * *', async () => {
       try {
         console.log(' Running deposit to investment job...');
         const startTime = Date.now();
