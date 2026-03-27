@@ -5,16 +5,19 @@ const prisma = new PrismaClient();
 class InvestmentService {
   /**
    * Calculate monthly percentage based on investment amount (Tier Based)
-   * 1 – 10,000 → 7%
-   * 10,001 – 25,000 → 8%
-   * 25,000+ → 9%
+   * < 1000     → 5%
+   * 1000–5000  → 7%
+   * 5001–10000 → 8%
+   * > 10000    → 9%
    */
   calculateMonthlyPercentage(amount) {
     const numAmount = parseFloat(amount);
-    
-    if (numAmount <= 10000) {
+
+    if (numAmount < 1000) {
+      return 5;
+    } else if (numAmount <= 5000) {
       return 7;
-    } else if (numAmount <= 25000) {
+    } else if (numAmount <= 10000) {
       return 8;
     } else {
       return 9;
@@ -192,6 +195,7 @@ class InvestmentService {
   /**
    * Calculate daily interest for all active investments
    * Called by cron job daily
+   * Only credits interest if user has ACTIVE robot status
    */
   async calculateDailyInterest() {
     try {
@@ -201,6 +205,9 @@ class InvestmentService {
           remaining_principal: {
             gt: 0
           }
+        },
+        include: {
+          User: true
         }
       });
 
@@ -208,10 +215,37 @@ class InvestmentService {
 
       const results = [];
 
+      let totalDailyInterest = 0;
+      let skippedCount = 0;
+
       for (const investment of activeInvestments) {
         try {
+          // Check if user has active robot status
+          if (investment.User.robot_status !== 'ACTIVE') {
+            console.log(
+              `[DailyInterest] ⏭️  Skipped User:${investment.user_id} Inv:${investment.id} - Robot status: ${investment.User.robot_status}`
+            );
+            skippedCount++;
+            results.push({
+              investmentId: investment.id,
+              userId: investment.user_id,
+              skipped: true,
+              reason: `Robot status is ${investment.User.robot_status}, not ACTIVE`,
+              success: true
+            });
+            continue;
+          }
+
           const dailyRate = parseFloat(investment.monthly_interest_rate) / 30 / 100;
-          const dailyInterest = parseFloat(investment.remaining_principal) * dailyRate;
+          const remaining = parseFloat(investment.remaining_principal);
+          const dailyInterest = remaining * dailyRate;
+          totalDailyInterest += dailyInterest;
+
+          console.log(
+            `[DailyInterest] Inv:${investment.id} User:${investment.user_id}` +
+              ` Principal:${remaining.toFixed(2)} Rate:${investment.monthly_interest_rate}%` +
+              ` DailyRate:${(dailyRate * 100).toFixed(4)}% Interest:+${dailyInterest.toFixed(2)}`
+          );
 
           // Add to profit wallet
           await prisma.$transaction(async (tx) => {
@@ -220,7 +254,11 @@ class InvestmentService {
               data: {
                 profit_balance: {
                   increment: dailyInterest
-                }
+                },
+                 total_profit: {
+                  increment: dailyInterest
+                },
+
               }
             });
 
@@ -259,6 +297,10 @@ class InvestmentService {
         }
       }
 
+      const creditedCount = results.filter(r => r.success && !r.skipped).length;
+      console.log(`🎯 Daily interest summary:`);
+      console.log(`   - Credited: ${creditedCount} investments | Total: ${totalDailyInterest.toFixed(2)}`);
+      console.log(`   - Skipped: ${skippedCount} investments (inactive robot status)`);
       return results;
     } catch (error) {
       throw error;
@@ -529,6 +571,72 @@ class InvestmentService {
     } catch (error) {
       throw error;
     }
+  }
+
+  /**
+   * Auto create investment from deposit (cron job)
+   */
+  async autoInvestFromDeposit(depositId) {
+    return await prisma.$transaction(async (tx) => {
+      //  Lock + check (prevents race condition)
+      const deposit = await tx.deposit.findFirst({
+        where: {
+          id: depositId,
+        }
+      });
+      if (!deposit) {
+        throw new Error(`Deposit not found or already processed: ${depositId}`);
+      }
+      const amount = Number(deposit.amount);
+
+      //  Plan selection
+      const plan = await tx.investmentPlan.findFirst({
+        where: {
+          min_amount: amount < 1000 ? 100 : 1000
+        }
+      });
+
+      if (!plan) {
+        throw new Error(`No suitable investment plan for amount ${amount}`);
+      }
+      let monthly_rate;
+
+      if (amount < 1000) {
+        monthly_rate = 5;
+      } else if (amount >= 1000 && amount < 5000) {
+        monthly_rate = 7;
+      } else if (amount >= 5000 && amount < 10000) {
+        monthly_rate = 8;
+      } else {
+        monthly_rate = 9;
+      }
+      //  Create investment (INSIDE TX)
+      const newInvestment = await tx.investment.create({
+              data: {
+                user_id: deposit.user_id,
+                plan_id: plan.id,
+                amount: amount,
+                status: 'ACTIVE', // optional but recommended
+                remaining_principal:amount,
+                monthly_interest_rate:monthly_rate,
+                start_date: new Date()
+              }
+            })
+      //  Create relation
+      await tx.depositeInvestmentRelation.create({
+        data: {
+          depositeId: depositId,
+          investmentId: newInvestment.id
+        }
+      });
+
+      console.log(`✅ Auto-invested deposit ${depositId} → investment ${newInvestment.id}`);
+
+      return newInvestment;
+    },
+    {
+    timeout: 15000 // 15 seconds
+  });
   }
 }
 

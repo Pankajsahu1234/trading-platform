@@ -90,6 +90,19 @@ export default function Settings() {
             <span className="text-muted-foreground">→</span>
           </button> */}
 
+        <button
+          onClick={() => navigate("/regenerate-transaction-code")}
+          className="w-full text-left p-4 bg-card/50 hover:bg-card border border-white/10 rounded-lg transition-colors flex items-center justify-between"
+        >
+          <div>
+            <p className="font-semibold text-sm">Regenerate Transaction Code</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Generate a new secure transaction code
+            </p>
+          </div>
+          <span className="text-muted-foreground">→</span>
+        </button>
+
         </GlassCard>
 
         {/* Notification Settings */}

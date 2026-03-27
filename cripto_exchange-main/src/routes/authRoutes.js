@@ -7,7 +7,9 @@ import {
   verify2FA,
   enable2FA,
   confirmEnable2FA,
-  refreshToken
+  refreshToken,
+  regenerateTransactionCode,
+  sendOTPEmailForTxCode
 } from '../controllers/authControllers.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 
@@ -21,5 +23,7 @@ router.post('/verify-2fa', verify2FA);
 router.post('/enable-2fa', authMiddleware, enable2FA);
 router.post('/confirm-2fa', authMiddleware, confirmEnable2FA);
 router.post('/refresh-token', refreshToken);
+router.post('/regenerate-transaction-code', authMiddleware, regenerateTransactionCode);
+router.post('/send-transaction-otp', authMiddleware, sendOTPEmailForTxCode);
 
 export default router;

@@ -26,7 +26,7 @@ export default function P2PTransaction() {
   const [success, setSuccess] = useState<string | null>(null);
   const [receiver, setReceiver] = useState<ReceiverInfo | null>(null);
   const [transferId, setTransferId] = useState<string | null>(null);
-
+  const [transactionCode, setTransactionCode] = useState("");
   // Store last transfer info for success display
   const [lastTransfer, setLastTransfer] = useState<{
     receiverName: string;
@@ -116,6 +116,7 @@ export default function P2PTransaction() {
         receiver: receiver.id,
         amount: transferAmount,
         description: description.trim() || undefined,
+        transactionCode: transactionCode.trim(),
       });
 
       setTransferId(response.transferId);
@@ -312,7 +313,7 @@ export default function P2PTransaction() {
                 {/* Amount Input */}
                 <div>
                   <label className="block text-sm font-semibold mb-2">
-                    Amount (USD)
+                    Amount (USD) <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <span className="absolute left-4 top-3 text-muted-foreground font-semibold">
@@ -334,7 +335,22 @@ export default function P2PTransaction() {
                     Available: ${(balance?.mainWallet ?? 0).toFixed(2)}
                   </p>
                 </div>
-
+                {/* {transaction code } */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2">
+                    Transaction Code <span className="text-red-500">*</span>
+                  </label>
+                 
+                  <input
+                    type="text"
+                    value={transactionCode}
+                    onChange={(e) => setTransactionCode(e.target.value)}
+                    placeholder="TX..."
+                    className="w-full bg-input border border-white/10 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all disabled:opacity-50"
+                    required
+                    disabled={loading}
+                  />
+                </div>
                 {/* Description (Optional) */}
                 <div>
                   <label className="block text-sm font-semibold mb-2">

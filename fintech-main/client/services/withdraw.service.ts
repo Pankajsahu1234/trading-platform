@@ -5,6 +5,7 @@ export interface WithdrawalRequest {
   type: "PROFIT" | "PRINCIPAL";
   amount: number;
   walletAddress: string;
+  transactionCode: string;
 }
 
 // ─── API Response ───────────────────────────────────────────────────
