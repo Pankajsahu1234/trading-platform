@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
 
-const API_BASE_URL = "https://timfox.com/api";
+const API_BASE_URL = "https://timofx.com/api";
 
 
 class ApiService {
