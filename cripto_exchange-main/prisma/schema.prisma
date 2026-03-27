@@ -39,6 +39,7 @@ model Deposit {
   sweep_status    String?
   created_at      DateTime @default(now())
   User            User     @relation(fields: [user_id], references: [id])
+  DepositeInvestmentRelations DepositeInvestmentRelation[]
 
   @@index([user_id], map: "Deposit_user_id_fkey")
 }
@@ -94,6 +95,7 @@ model Investment {
   created_at            DateTime       @default(now())
   InvestmentPlan        InvestmentPlan @relation(fields: [plan_id], references: [id])
   User                  User           @relation(fields: [user_id], references: [id])
+  DepositeInvestmentRelations DepositeInvestmentRelation[]
 
   @@index([plan_id], map: "Investment_plan_id_fkey")
   @@index([user_id], map: "Investment_user_id_fkey")
@@ -286,4 +288,16 @@ model Withdrawal {
   User               User      @relation(fields: [user_id], references: [id])
 
   @@index([user_id], map: "Withdrawal_user_id_fkey")
+}
+model DepositeInvestmentRelation {
+  id            String   @id @default(uuid())
+  depositeId    String   
+  investmentId  String   
+  created_at    DateTime @default(now())
+  Deposit       Deposit  @relation(fields: [depositeId], references: [id])
+  Investment    Investment @relation(fields: [investmentId], references: [id])
+
+  @@unique([depositeId, investmentId])
+  @@index([depositeId])
+  @@index([investmentId])
 }

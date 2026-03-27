@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import investmentService from '../services/investment.service.js';
+import DepositToInvestmentJob from '../jobs/depositToInvestment.job.js';
 
 class CronJobs {
   /**
@@ -9,7 +10,37 @@ class CronJobs {
     // Daily interest calculation - runs at midnight every day (00:00)
     this.scheduleDailyInterestCalculation();
 
+    // Deposit to investment conversion - every 10 minutes
+    this.scheduleDepositToInvestment();
+
     console.log('✅ Cron jobs initialized');
+  }
+
+  /**
+   * Deposit to investment cron job
+   * Runs every 10 minutes
+   */
+  scheduleDepositToInvestment() {
+    cron.schedule('*/30 * * * * *', async () => {
+      try {
+        console.log(' Running deposit to investment job...');
+        const startTime = Date.now();
+
+        const results = await DepositToInvestmentJob.processAllPendingDeposits();
+
+        const endTime = Date.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(2);
+        
+        console.log(`✅ Deposit to investment job completed in ${duration}s. Success: ${successful}/${results.length}`);
+      } catch (error) {
+        console.error('❌ Deposit to investment job failed:', error);
+      }
+    }, {
+      scheduled: true,
+      timezone: "UTC"
+    });
+
+    console.log('🔄 Deposit to investment scheduled (*/10 * * * *)');
   }
 
   /**

@@ -49,7 +49,7 @@ export const submitDeposit = async (req, res) => {
     }
 
     // ✅ Upload screenshot to S3
-    const screenshotKey = await uploadDepositScreenshot(file, userId);
+    // const screenshotKey = await uploadDepositScreenshot(file, userId);
 
     // ✅ Save in DB
     const submission = await prisma.depositSubmission.create({
@@ -60,7 +60,7 @@ export const submitDeposit = async (req, res) => {
         amount: parseFloat(amount),
         deposit_address: userDepositAddress,
         tx_hash,
-        screenshot: screenshotKey,
+        screenshot: "123", // screenshotKey,
         status: "PENDING",
         type: "DEPOSIT"
       }

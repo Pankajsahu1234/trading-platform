@@ -530,6 +530,72 @@ class InvestmentService {
       throw error;
     }
   }
+
+  /**
+   * Auto create investment from deposit (cron job)
+   */
+  async autoInvestFromDeposit(depositId) {
+    return await prisma.$transaction(async (tx) => {
+      //  Lock + check (prevents race condition)
+      const deposit = await tx.deposit.findFirst({
+        where: {
+          id: depositId,
+        }
+      });
+      if (!deposit) {
+        throw new Error(`Deposit not found or already processed: ${depositId}`);
+      }
+      const amount = Number(deposit.amount);
+
+      //  Plan selection
+      const plan = await tx.investmentPlan.findFirst({
+        where: {
+          min_amount: amount < 1000 ? 100 : 1000
+        }
+      });
+
+      if (!plan) {
+        throw new Error(`No suitable investment plan for amount ${amount}`);
+      }
+      let monthly_rate;
+
+      if (amount < 1000) {
+        monthly_rate = 5;
+      } else if (amount >= 1000 && amount < 5000) {
+        monthly_rate = 7;
+      } else if (amount >= 5000 && amount < 10000) {
+        monthly_rate = 8;
+      } else {
+        monthly_rate = 9;
+      }
+      //  Create investment (INSIDE TX)
+      const newInvestment = await tx.investment.create({
+              data: {
+                user_id: deposit.user_id,
+                plan_id: plan.id,
+                amount: amount,
+                status: 'ACTIVE', // optional but recommended
+                remaining_principal:amount,
+                monthly_interest_rate:monthly_rate,
+                start_date: new Date()
+              }
+            })
+      //  Create relation
+      await tx.depositeInvestmentRelation.create({
+        data: {
+          depositeId: depositId,
+          investmentId: newInvestment.id
+        }
+      });
+
+      console.log(`✅ Auto-invested deposit ${depositId} → investment ${newInvestment.id}`);
+
+      return newInvestment;
+    },
+    {
+    timeout: 15000 // 15 seconds
+  });
+  }
 }
 
 export default new InvestmentService();
