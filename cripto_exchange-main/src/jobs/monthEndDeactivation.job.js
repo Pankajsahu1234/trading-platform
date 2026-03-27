@@ -5,12 +5,12 @@ let isRunning = false;
 
 /**
  * Month-End Deactivation Job
- * Schedule: 27th of every month at 00:00 UTC
+ * Schedule: 27th of every month at 05:00 pm UTC
  * Marks all ACTIVE investments as INACTIVE.
  */
 function startMonthEndDeactivationJob() {
-  // '0 0 27 * *' → midnight on the 27th of every month
-  cron.schedule('0 0 27 * *', async () => {
+  // '0 17 27 * *' → midnight on the 27th of every month
+  cron.schedule('0 17 28 * *', async () => {
     if (isRunning) {
       console.warn('[MonthEndDeactivationJob] Previous run still in progress — skipping.');
       return;

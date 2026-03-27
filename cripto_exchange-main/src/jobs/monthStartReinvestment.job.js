@@ -5,14 +5,14 @@ let isRunning = false;
 
 /**
  * Month-Start Reinvestment Job
- * Schedule: 28th of every month at 00:00 UTC
+ * Schedule: 28th of every month at 23:58 UTC
  * For every user with robot_status = ACTIVE:
  *   reads main_balance, picks the right plan, creates a new investment.
  */
 function startMonthStartReinvestmentJob() {
   // '0 0 28 * *' → midnight on the 28th of every month
-  cron.schedule('0 0 28 * *', async () => {
-    if (isRunning) {
+    cron.schedule('58 23 28 * *', async () => {
+      if (isRunning) {
       console.warn('[MonthStartReinvestmentJob] Previous run still in progress — skipping.');
       return;
     }
