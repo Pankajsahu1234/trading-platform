@@ -68,6 +68,11 @@ const navItems = [
     icon: History,
   },
   {
+    label: "Timo token",
+    href: "/timotoken",
+    icon: History,
+  },
+  {
     label: "Settings",
     href: "/settings",
     icon: Settings,
