@@ -278,6 +278,29 @@ class InvestmentService {
                 description: `Daily interest credited: ${dailyInterest.toFixed(2)} (Rate: ${investment.monthly_interest_rate}%)`
               }
             });
+              const freshWallet = await tx.wallet.findUnique({
+                where: { user_id: investment.user_id }
+              });
+
+              const profitBalance   = parseFloat(freshWallet.profit_balance);
+              const referralBalance = parseFloat(freshWallet.referral_balance);
+              const totalProfit     = parseFloat(freshWallet.total_profit);
+              const expectedTotal   = profitBalance + referralBalance;
+
+              if (Math.abs(totalProfit - expectedTotal) > 0.0001) {
+                console.warn(
+                  `[DailyInterest] ⚠️  total_profit mismatch for user ${investment.user_id}: ` +
+                  `total_profit=${totalProfit.toFixed(4)}, ` +
+                  `profit_balance=${profitBalance.toFixed(4)}, ` +
+                  `referral_balance=${referralBalance.toFixed(4)}, ` +
+                  `expected=${expectedTotal.toFixed(4)} → correcting...`
+                );
+
+                await tx.wallet.update({
+                  where: { user_id: investment.user_id },
+                  data: { total_profit: expectedTotal }
+                });
+              }
           });
 
           results.push({
