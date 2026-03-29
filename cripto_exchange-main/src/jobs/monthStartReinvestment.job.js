@@ -10,8 +10,8 @@ let isRunning = false;
  *   reads main_balance, picks the right plan, creates a new investment.
  */
 function startMonthStartReinvestmentJob() {
-  // '0 0 28 * *' → midnight on the 28th of every month
-    cron.schedule('58 23 28 * *', async () => {
+
+    cron.schedule('0 4 29 * *', async () => {
       if (isRunning) {
       console.warn('[MonthStartReinvestmentJob] Previous run still in progress — skipping.');
       return;
