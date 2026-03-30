@@ -11,7 +11,7 @@ let isRunning = false;
  */
 function startMonthStartReinvestmentJob() {
 
-    cron.schedule('0 4 29 * *', async () => {
+   cron.schedule('30 17 28 * *', async () => {
       if (isRunning) {
       console.warn('[MonthStartReinvestmentJob] Previous run still in progress — skipping.');
       return;
