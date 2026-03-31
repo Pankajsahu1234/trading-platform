@@ -25,6 +25,7 @@ import P2PTransaction from "@/pages/P2PTransaction";
 import RobotActivation from "@/pages/RobotActivation";
 import Referral from "@/pages/Referral";
 import History from "@/pages/History";
+import TimoToekn from "@/pages/TimoToken";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -114,6 +115,7 @@ function AppRoutes() {
         <Route path="/robot/activate" element={<RobotActivation />} />
         <Route path="/referral" element={<Referral />} />
         <Route path="/history" element={<History />} />
+        <Route path="/timotoken" element={<TimoToekn/>} />
         <Route path="/settings" element={<Settings />} />
         <Route
             path="/regenerate-transaction-code"
