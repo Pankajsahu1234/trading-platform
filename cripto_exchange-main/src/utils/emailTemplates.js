@@ -475,12 +475,170 @@ function transactionCodeOTPTemplate(otp, name = 'User') {
   `;
 }
 
-
+function transactionCodePdfEmailTemplate(name = 'User') {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TIMO FX - Your Transaction Code PDF</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body style="margin:0;padding:0;background-color:#070b12;font-family:'Inter',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#070b12;">
+    <tr>
+      <td align="center" style="padding:48px 16px;">
+        <table width="580" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;width:100%;">
+          <!-- PRE-HEADER -->
+          <tr>
+            <td align="center" style="padding-bottom:20px;">
+              <span style="font-size:11px;color:#2a3050;letter-spacing:3px;text-transform:uppercase;">Secure Communication · timofx.com</span>
+            </td>
+          </tr>
+          <!-- CARD -->
+          <tr>
+            <td style="border-radius:24px;overflow:hidden;border:1px solid #1a2035;box-shadow:0 24px 80px rgba(0,0,0,0.7);">
+              <!-- HEADER BANNER -->
+              <div style="position:relative;background:#070b12;overflow:hidden;height:130px;">
+                <svg style="position:absolute;top:0;left:0;width:100%;height:200%;opacity:0.12;" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <pattern id="hlines" x="0" y="0" width="580" height="40" patternUnits="userSpaceOnUse">
+                      <line x1="0" y1="0" x2="580" y2="0" stroke="#f0c040" stroke-width="0.5"/>
+                    </pattern>
+                    <pattern id="vlines" x="0" y="0" width="40" height="260" patternUnits="userSpaceOnUse">
+                      <line x1="0" y1="0" x2="0" y2="260" stroke="#f0c040" stroke-width="0.5"/>
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#hlines)"/>
+                  <rect width="100%" height="100%" fill="url(#vlines)"/>
+                </svg>
+                <!-- LOGO -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="position:relative;z-index:2;">
+                  <tr>
+                    <td align="center" style="padding-top:32px;">
+                      <table cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td style="vertical-align:middle;">
+                            <div style="width:44px;height:44px;background:linear-gradient(145deg,#b8860b,#f0c040);border-radius:12px;text-align:center;line-height:44px;display:inline-block;">
+                              <span style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:#070b12;">T</span>
+                            </div>
+                          </td>
+                          <td style="padding-left:13px;vertical-align:middle;">
+                            <div style="font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:#f0c040;letter-spacing:3px;line-height:1.1;">TIMO<span style="color:#ffffff;"> FX</span></div>
+                            <div style="font-size:9px;color:#4a5568;letter-spacing:4px;text-transform:uppercase;margin-top:1px;">Investment Platform</div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <!-- TOP GOLD LINE -->
+              <div style="height:3px;background:linear-gradient(90deg,#7a5500,#c9a227,#f0c040,#c9a227,#7a5500);"></div>
+              <!-- BODY -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(160deg,#0f1420 0%,#0c1018 100%);">
+                <tr>
+                  <td style="padding:36px 44px 20px;">
+                    <h1 style="font-family:'Rajdhani',sans-serif;font-size:34px;font-weight:700;color:#ffffff;margin:0 0 12px;letter-spacing:0.5px;line-height:1.2;">
+                      Transaction Code <span style="color:#f0c040;">PDF</span>
+                    </h1>
+                    <p style="font-size:14px;color:#6b7a9a;margin:0 0 28px;line-height:1.8;">
+                      Hi <strong style="color:#c8d0e0;font-weight:500;">${name}</strong>, your secure Transaction Code PDF is attached. 
+                      <strong style="color:#f0c040;">This code is required for all withdrawal and P2P transactions.</strong>
+                    </p>
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 auto 24px auto;">
+                      <tr>
+                        <td style="background:linear-gradient(135deg,#0e1520,#131c2b);border:1px solid #f0c04035;border-radius:20px;padding:24px 20px;text-align:center;">
+                          <div style="font-size:9px;color:#3a4560;letter-spacing:4px;text-transform:uppercase;margin-bottom:16px;">Secure PDF Attached</div>
+                          <div style="font-size:14px;color:#f0c040;margin-bottom:12px;">📄 TransactionCode.pdf</div>
+                          <div style="height:1px;background:linear-gradient(90deg,transparent,#f0c04020,transparent);margin:13px auto;max-width:144px;"></div>
+                          <table cellpadding="0" cellspacing="0" align="center">
+                            <tr>
+                              <td style="background:#0a1020;border:1px solid #1e2a40;border-radius:20px;padding:4px 13px;">
+                                <span style="font-size:10px;color:#6b7a9a;letter-spacing:1px;">🔐 &nbsp; <strong style="color:#f0c040;">Password Protected</strong></span>
+                              </td>
+                            </tr>
+                          </table>
+                          <div style="font-size:11px;color:#6b7a9a;margin-top:14px;">Password: Your phone number</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 44px 36px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="background:#0f1420;border:1px solid #ffffff20;border-radius:20px;padding:18px 22px;">
+                          <table cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                              <td width="28" style="vertical-align:top;padding-top:1px;">
+                                <span style="font-size:16px;">⚠️</span>
+                              </td>
+                              <td style="padding-left:10px;">
+                                <div style="font-size:12px;font-weight:600;color:#e2e8f0;margin-bottom:4px;letter-spacing:0.5px;">Important Security Information</div>
+                                <div style="font-size:12px;color:#a0aec0;line-height:1.7;">
+                                  • Save this PDF securely - you will not see this code again<br/>
+                                  • Never share your transaction code with anyone<br/>
+                                  • We will never ask for your transaction code<br/>
+                                  • Use this code for withdrawal and P2P transactions only
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 44px;">
+                    <div style="height:1px;background:linear-gradient(90deg,transparent,#1a2035,transparent);"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:22px 44px 30px;">
+                    <div style="font-size:11px;color:#4a5568;text-align:center;line-height:1.7;">
+                      If you did not request a transaction code, please contact our support team immediately.<br/>
+                      <strong>Do not reply to this email.</strong>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+              <!-- BOTTOM GOLD LINE -->
+              <div style="height:3px;background:linear-gradient(90deg,#7a5500,#c9a227,#f0c040,#c9a227,#7a5500);"></div>
+              <!-- FOOTER -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#070b12;border-top:1px solid #1a2035;">
+                <tr>
+                  <td style="padding:24px 44px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td align="center">
+                          <div style="font-size:10px;color:#4a5568;letter-spacing:0.5px;">© 2024 TIMO FX. All rights reserved.</div>
+                          <div style="font-size:9px;color:#2a3050;margin-top:6px;">This is a secure automated message from TIMO FX Security Service</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+}
 
 export  {
   emailVerificationTemplate,
   twoFactorSetupTemplate,
   twoFactorLoginTemplate,
   transactionCodeEmailTemplate,
-  transactionCodeOTPTemplate
+  transactionCodeOTPTemplate,
+  transactionCodePdfEmailTemplate
 };
