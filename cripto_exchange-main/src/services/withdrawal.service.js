@@ -58,7 +58,7 @@ class WithdrawalService {
     }
   }
 
-  async requestWithdrawal(userId, type, requestedAmount, walletAddress) {
+  async requestWithdrawal(userId, type, requestedAmount, walletAddress, transactionCode) {
     try {
       const amount = parseFloat(requestedAmount);
       if (amount <= 0) {
@@ -67,6 +67,21 @@ class WithdrawalService {
     
       if (!walletAddress || walletAddress.trim() === '') {
         throw new Error('Wallet address is required');
+      }
+      if (!transactionCode || transactionCode.trim() === '') {
+        throw new Error('Transaction code is required');
+      }
+
+      // Validate transaction code
+      const tc = await prisma.transactionCode.findFirst({
+        where: {
+          userId: userId,
+          transactionCode: transactionCode.trim(),
+          isInvalid: false
+        }
+      });
+      if (!tc) {
+        throw new Error('Invalid transaction code. Please provide the correct transaction code sent to your email.');
       }
 
       const user = await prisma.user.findUnique({
@@ -427,7 +442,7 @@ class WithdrawalService {
       const withdrawals = await prisma.withdrawal.findMany({
         where: { status: 'PENDING' },
         include: {
-          user: {
+          User: {
             select: {
               id: true,
               name: true,
@@ -440,8 +455,8 @@ class WithdrawalService {
 
       return withdrawals.map(w => ({
         id: w.id,
-        userName: w.user.name,
-        userEmail: w.user.email,
+        userName: w.User.name,
+        userEmail: w.User.email,
         withdrawalType: w.type,
         userWalletAddress: w.user_address,
         requestedAmount: parseFloat(w.requested_amount),

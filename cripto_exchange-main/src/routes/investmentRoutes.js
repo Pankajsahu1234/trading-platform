@@ -18,8 +18,6 @@ router.get('/', investmentController.getUserInvestments);
 // Get single investment
 router.get('/:id', investmentController.getInvestmentById);
 
-// Create new investment
-router.post('/', investmentController.createInvestment);
 
 // Withdraw profit
 router.post('/withdraw-profit', investmentController.withdrawProfit);

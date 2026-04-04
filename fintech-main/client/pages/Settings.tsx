@@ -151,15 +151,6 @@ export default function Settings() {
             <div>
               <label className="block text-sm font-medium mb-2">Phone</label>
               <input
-                type="email"
-                defaultValue={user?.phone}
-                className="w-full bg-input border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"
-                disabled
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Phone</label>
-              <input
                 type="tel"
                 defaultValue={user?.phone || "Not provided"}
                 className="w-full bg-input border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -176,18 +167,43 @@ export default function Settings() {
             Security
           </h3>
 
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              Update your password to keep your account secure.
+          
+          <button onClick={() => setShowChangePassword(true)} className="w-full text-left p-4 bg-card/50 hover:bg-card border border-white/10 rounded-lg transition-colors flex items-center justify-between">
+            <div>
+              <p className="font-semibold text-sm" >Change Password</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Update your password regularly
+              </p>
+            </div>
+            <span className="text-muted-foreground">→</span>
+          </button>
+
+          {/* <button
+            onClick={() => navigate("/security/enable-2fa")}
+            className="w-full text-left p-4 bg-card/50 hover:bg-card border border-white/10 rounded-lg transition-colors flex items-center justify-between"
+          >
+            <div>
+              <p className="font-semibold text-sm">Two-Factor Authentication</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Add an extra layer of security
+              </p>
+            </div>
+            <span className="text-muted-foreground">→</span>
+          </button> */}
+
+        <button
+          onClick={() => navigate("/regenerate-transaction-code")}
+          className="w-full text-left p-4 bg-card/50 hover:bg-card border border-white/10 rounded-lg transition-colors flex items-center justify-between"
+        >
+          <div>
+            <p className="font-semibold text-sm">Regenerate Transaction Code</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Generate a new secure transaction code
             </p>
-            <button
-              onClick={() => setShowChangePassword(true)}
-              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-lg transition-all duration-200"
-            >
-              <Shield size={16} />
-              Change Password
-            </button>
           </div>
+          <span className="text-muted-foreground">→</span>
+        </button>
+
         </GlassCard>
 
         {/* Notification Settings */}

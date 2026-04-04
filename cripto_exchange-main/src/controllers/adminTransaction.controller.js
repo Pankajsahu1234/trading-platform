@@ -30,7 +30,7 @@ export const getAllTransactionsForAdmin = async (req, res) => {
         skip,
         take: limit,
         include: {
-          user: {
+          User: {
             select: {
               id: true,
               name: true,

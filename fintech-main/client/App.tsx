@@ -25,10 +25,12 @@ import P2PTransaction from "@/pages/P2PTransaction";
 import RobotActivation from "@/pages/RobotActivation";
 import Referral from "@/pages/Referral";
 import History from "@/pages/History";
+import TimoToekn from "@/pages/TimoToken";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import RegenerateTransactionCode from "./pages/RegenerateTransactionCode";
 
 const queryClient = new QueryClient();
 
@@ -113,7 +115,12 @@ function AppRoutes() {
         <Route path="/robot/activate" element={<RobotActivation />} />
         <Route path="/referral" element={<Referral />} />
         <Route path="/history" element={<History />} />
+        <Route path="/timotoken" element={<TimoToekn/>} />
         <Route path="/settings" element={<Settings />} />
+        <Route
+            path="/regenerate-transaction-code"
+            element={<RegenerateTransactionCode />}
+          />
         {/* 2FA setup pages - protected */}
         <Route path="/security/enable-2fa" element={<Enable2FA />} />
         <Route path="/security/confirm-2fa" element={<Confirm2FA />} />

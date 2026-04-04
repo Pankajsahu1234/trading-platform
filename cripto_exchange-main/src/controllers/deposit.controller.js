@@ -60,7 +60,7 @@ export const submitDeposit = async (req, res) => {
         amount: parseFloat(amount),
         deposit_address: userDepositAddress,
         tx_hash,
-        screenshot: screenshotKey,
+        screenshot: screenshotKey, // screenshotKey,
         status: "PENDING",
         type: "DEPOSIT"
       }

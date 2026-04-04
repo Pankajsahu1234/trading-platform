@@ -67,6 +67,7 @@ export default function Withdraw() {
   );
   const [amount, setAmount] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [transactionCode, setTransactionCode] = useState(""); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successData, setSuccessData] = useState<WithdrawalData | null>(null);
@@ -105,6 +106,11 @@ export default function Withdraw() {
       return;
     }
 
+    if (!transactionCode.trim()) {
+      setError("Please enter your transaction code.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -112,6 +118,7 @@ export default function Withdraw() {
         type: withdrawType,
         amount: parsedAmount,
         walletAddress: walletAddress.trim(),
+        transactionCode: transactionCode.trim(),
       });
 
       if (result.success) {
@@ -320,6 +327,24 @@ export default function Withdraw() {
               <p className="text-xs text-muted-foreground mt-2">
                 Double-check your address — transactions cannot be reversed once
                 processed.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-3">
+                Transaction Code <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="text"
+                value={transactionCode}
+                onChange={(e) => setTransactionCode(e.target.value)}
+                placeholder="Enter your transaction code (from verification email)"
+                disabled={loading || !isWindowOpen}
+                className="w-full bg-input border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                required
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                Your unique transaction code sent during email verification.
               </p>
             </div>
 
