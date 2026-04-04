@@ -214,7 +214,7 @@ useEffect(() => {
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium cursor-pointer",
                   isActive
                     ? "bg-primary/20 text-primary border border-primary/30"
-                    : "text-foreground hover:bg-sidebar-accent",
+                    : "text-sidebar-foreground hover:bg-sidebar-accent",
                   isDisabled && "cursor-not-allowed opacity-60",
                 )}
                 aria-disabled={isDisabled}
@@ -237,7 +237,7 @@ useEffect(() => {
            <div ref={notifRef} className="relative">
   <button
     onClick={() => setNotifOpen((v) => !v)}
-    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-sidebar-accent transition-colors"
+    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
   >
     <Bell size={18} />
     Notifications
@@ -273,7 +273,7 @@ useEffect(() => {
 
             <button
               onClick={() => onToggleDarkMode(!isDarkMode)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-sidebar-accent transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
             >
               {isDarkMode ? (
                 <Sun size={18} className="text-amber-400" />
@@ -283,7 +283,7 @@ useEffect(() => {
               {isDarkMode ? "Light Mode" : "Dark Mode"}
             </button>
 
-            <button className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-sidebar-accent transition-colors"
+            <button className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
              onClick={() => { navigate("/settings"); onToggle(); }}>
               <User size={18} />
               Profile
@@ -298,7 +298,7 @@ useEffect(() => {
               logout();
               onToggle();
             }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:bg-sidebar-accent transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
           >
             <LogOut size={18} />
             Logout
