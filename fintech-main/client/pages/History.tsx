@@ -311,13 +311,19 @@ export default function History() {
           <GlassCard heavy className="p-6 overflow-x-auto">
             {/* ── Desktop Table (sm and above) ── */}
             <div className="hidden sm:block overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm table-fixed">
+                <colgroup>
+                  <col className="w-1/4" />
+                  <col className="w-1/4" />
+                  <col className="w-1/4" />
+                  <col className="w-1/4" />
+                </colgroup>
                 <thead className="border-b border-white/10">
                   <tr className="text-muted-foreground text-xs uppercase font-semibold">
-                    <th className="text-left py-3 px-4">Date & Time</th>
-                    <th className="text-left py-3 px-4">Type</th>
-                    <th className="text-right py-3 px-4">Amount</th>
-                    <th className="text-left py-3 px-4">Status</th>
+                    <th className="text-center py-3 px-4">Date & Time</th>
+                    <th className="text-center py-3 px-4">Type</th>
+                    <th className="text-center py-3 px-4">Amount</th>
+                    <th className="text-center py-3 px-4">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/10">
@@ -327,25 +333,23 @@ export default function History() {
                       className="hover:bg-card/50 transition-colors cursor-pointer"
                       onClick={() => setSelectedTxn(txn)}
                     >
-                      <td className="py-4 px-4">
+                      <td className="py-4 px-4 text-center">
                         <p className="font-medium">
                           {formatDate(txn.timestamp)}
                         </p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(txn.timestamp).toLocaleTimeString()}
-                        </p>
                       </td>
-                      <td className="py-4 px-4 capitalize">
+                      <td className="py-4 px-4 capitalize text-center">
                         {txn.type?.replace(/_/g, " ") || "N/A"}
                       </td>
-                      <td className="py-4 px-4 text-right font-semibold">
+                      <td className="py-4 px-4 text-center font-semibold">
                         {formatCurrency(txn.amount)}
                       </td>
-                      <td className="py-4 px-4">
+                      <td className="py-4 px-4 text-center">
                         <span
                           className={`text-xs font-semibold px-2 py-1 rounded capitalize ${
                             txn.status?.toLowerCase() === "completed" ||
-                            txn.status?.toLowerCase() === "success"
+                            txn.status?.toLowerCase() === "success" ||
+                            txn.status?.toLowerCase() === "confirmed"
                               ? "bg-profit/20 text-profit"
                               : txn.status?.toLowerCase() === "pending"
                               ? "bg-warning/20 text-warning"

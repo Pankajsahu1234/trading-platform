@@ -186,12 +186,15 @@ useEffect(() => {
         )}
       >
         <div className="p-6 border-b border-white/10">
-          <h1 className="text-2xl font-bold text-foreground">Timofx</h1>
+            <h1 className="text-2xl font-bold">
+              <span className="text-white">Timo</span>
+              <span className="text-primary">FX</span>
+            </h1>
           <p className="text-xs text-muted-foreground mt-1">
             Professional Investment Platform
           </p>
         </div>
-
+    
         <nav className="flex flex-col gap-1 p-4 flex-1">
           {navItems.map((item) => {
             const Icon = item.icon;
