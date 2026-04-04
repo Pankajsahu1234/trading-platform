@@ -45,8 +45,8 @@ export const getAllTransactionsForAdmin = async (req, res) => {
     const formattedTransactions = transactions.map((txn) => ({
       id: txn.id,
       user_id: txn.user_id,
-      user_name: txn.user?.name || null,
-      user_email: txn.user?.email || null,
+      user_name: txn.User?.name || null,
+      user_email: txn.User?.email || null,
       type: txn.type,
       amount: Number(txn.gross_amount || 0),
       fee: Number(txn.fee_amount || 0),
