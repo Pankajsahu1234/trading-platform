@@ -7,6 +7,9 @@ import {
   Copy,
   CheckCircle,
   Loader2,
+  Eye,
+  EyeOff,
+  AlertCircle,
 } from "lucide-react";
 import axios from "axios";
 import { apiClient } from "@/services/api";
@@ -16,23 +19,26 @@ export default function RegenerateTransactionCode() {
 
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [generatedCode, setGeneratedCode] = useState("");
   const [message, setMessage] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
 
   //  Send OTP
   const handleSendOtp = async () => {
     try {
       setLoading(true);
+      setError("");
 
       await apiClient.post("/auth/send-transaction-otp");
 
       setStep("otp");
     } catch (err: any) {
-      alert(err?.response?.data?.error || "Failed to send OTP");
+      setError(err?.response?.data?.error || "Failed to send OTP");
     } finally {
       setLoading(false);
     }
@@ -42,6 +48,7 @@ export default function RegenerateTransactionCode() {
   const handleGenerate = async () => {
     try {
       setLoading(true);
+      setError("");
 
       const res = await apiClient.post("/auth/regenerate-transaction-code", {
         emailVerificationOTP: otp,
@@ -49,13 +56,14 @@ export default function RegenerateTransactionCode() {
       });
       console.log("API Response:", res);
       if(res?.error){
-        alert(res?.error);
+        setError(res?.error);
         return;
       }
       setGeneratedCode(res.data.transactionCode);
       setMessage(res.data.message);
     } catch (err: any) {
-      alert(err?.response?.data?.error || "Failed");
+      console.error("Error generating transaction code:", err);
+      setError(err?.data?.error || err?.response?.data?.message || err?.message || "Failed to generate transaction code");
     } finally {
       setLoading(false);
     }
@@ -80,6 +88,14 @@ export default function RegenerateTransactionCode() {
             Securely generate a new transaction code
           </p>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 flex items-center gap-3">
+            <AlertCircle className="text-red-500 flex-shrink-0" size={20} />
+            <p className="text-red-400 text-sm">{error}</p>
+          </div>
+        )}
 
         {/* Main Card */}
         <GlassCard heavy className="p-8 space-y-6">
@@ -130,13 +146,22 @@ export default function RegenerateTransactionCode() {
 
               <div>
                 <label className="text-sm font-medium">Enter Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full mt-1 bg-input border border-white/10 rounded-lg px-4 py-2"
-                />
+                <div className="relative mt-1">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    className="w-full bg-input border border-white/10 rounded-lg px-4 py-2 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
 
               <button

@@ -34,8 +34,11 @@ class ApiService {
     this.instance.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
-        if (error.response?.status === 401) {
-          // Handle unauthorized - clear auth and redirect to login
+        const requestUrl = error.config?.url ?? "";
+        const isAuthEndpoint = /\/auth\/(login|register|forgot-password|reset-password|refresh-token|regenerate-transaction-code)/.test(requestUrl);
+
+        if (error.response?.status === 401 && !isAuthEndpoint) {
+          // Handle unauthorized for protected requests only
           localStorage.removeItem("auth_token");
           window.location.href = "/login";
         }
