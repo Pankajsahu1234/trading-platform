@@ -11,12 +11,14 @@ import {
   transactionCodeEmailTemplate,
   twoFactorSetupTemplate,
   twoFactorLoginTemplate,
-  transactionCodeOTPTemplate
+  transactionCodeOTPTemplate,
+  transactionCodePdfEmailTemplate
 } from '../utils/emailTemplates.js'
 import { sendEmail } from '../services/emailService.js'
 import { handleReferralOnRegister } from '../controllers/refralsControllers.js'
 import {performance} from 'perf_hooks'
-import crypto from 'crypto';
+import crypto from 'crypto'
+import { generateTransactionCodePDF } from '../utils/transactionCodePdfGenerator.js';
 const prisma = new PrismaClient()
 
 async function register(req, res) {
@@ -530,7 +532,49 @@ async function regenerateTransactionCode(req, res) {
       });
     }
 
-    // 7. Clear OTP after use (important )
+    
+
+    // 8. Generate PDF with transaction code
+    console.log(`📄 Generating Transaction Code PDF for user: ${user.email}`);
+    // Prepare password without country code
+    const rawPhone = (user.phone || '').toString().replace(/\D/g, '');
+    const passwordPhone = rawPhone.length > 10 ? rawPhone.slice(-10) : rawPhone;
+    try {
+      const pdfBuffer = await generateTransactionCodePDF(
+        result.transactionCode,
+        user.email,
+        user.name,
+        passwordPhone // Using phone number without country code as PDF password
+      );
+
+      // 9. Send email with PDF attachment
+      console.log(`📧 Sending Transaction Code PDF to: ${user.email}`);
+      const html = transactionCodePdfEmailTemplate(user.name);
+      const emailResult = await sendEmail(user.email, 'Your Secured Transaction Code - TIMO FX', html, [
+        {
+          filename: 'TransactionCode.pdf',
+          content: pdfBuffer,
+          contentType: 'application/pdf',
+        },
+      ]);
+
+      if (!emailResult.success) {
+        console.error('⚠️ PDF email sending failed:', emailResult.error);
+        return res.status(500).json({
+          error: "Failed to send transaction code. Please try again.",
+          details: emailResult.error,
+        });
+      }
+
+      console.log(`✅ Transaction Code PDF sent successfully`);
+    } catch (pdfError) {
+      console.error('❌ Error generating or sending PDF:', pdfError);
+      return res.status(500).json({
+        error: "Failed to generate or send transaction code PDF",
+        details: pdfError.message,
+      });
+    }
+    // 9. Clear OTP after use (important)
     await prisma.user.update({
       where: { id: userId },
       data: {
@@ -538,15 +582,16 @@ async function regenerateTransactionCode(req, res) {
       },
     });
 
-    // 8. Response
+    // 10. Response
     return res.json({
       message:
-        "Transaction code generated successfully. Copy and store this code securely. You will not see this code again.",
+        "Transaction code generated successfully and sent to your email. Download and save the PDF securely. You will not see this code again.",
       transactionCode: result.transactionCode,
+      notifyMessage: "Check your email for the secure PDF containing your transaction code (password: your phone number)"
     });
 
   } catch (error) {
-    console.error(" Regenerate Transaction Code Error:", error);
+    console.error("❌ Regenerate Transaction Code Error:", error);
     return res.status(500).json({
       error: "Failed to regenerate transaction code",
     });
