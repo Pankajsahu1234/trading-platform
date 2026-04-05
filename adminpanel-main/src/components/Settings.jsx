@@ -397,7 +397,7 @@ export default function Settings({ isOpen, onClose }) {
 
                     <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                       <p className="text-sm font-semibold text-blue-700 dark:text-blue-400">System Version</p>
-                      <p className="text-sm text-blue-600 dark:text-blue-300 mt-1">TradeMaster Admin Panel v1.0.0</p>
+                      <p className="text-sm text-blue-600 dark:text-blue-300 mt-1">TimoFX Admin Panel v1.0.0</p>
                     </div>
                   </div>
                 </div>
