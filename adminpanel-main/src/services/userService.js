@@ -1,4 +1,4 @@
-const BASE_URL = "https://api.timofx.com/api";
+const BASE_URL = "http://timo-dev-alb-2026977482.ap-south-1.elb.amazonaws.com/api";
 
 const getToken = () => localStorage.getItem('token');
 const authHeaders = () => ({
