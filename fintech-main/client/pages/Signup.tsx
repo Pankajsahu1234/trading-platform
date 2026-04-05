@@ -8,15 +8,17 @@ import { apiClient } from "@/services/api";
 import { set } from "zod/v4";
 
 const COUNTRIES = [
-  { name: "India", code: "+91", flag: "🇮🇳", maxDigits: 10 },
-  { name: "UAE", code: "+971", flag: "🇦🇪", maxDigits: 9 },
-  { name: "Singapore", code: "+65", flag: "🇸🇬", maxDigits: 8 },
+  { name: "Germany", code: "+49", flag: "🇩🇪", maxDigits: 10 },
   { name: "Hong Kong", code: "+852", flag: "🇭🇰", maxDigits: 8 },
+  { name: "India", code: "+91", flag: "🇮🇳", maxDigits: 10 },
+  { name: "Indonesia", code: "+62", flag: "🇮🇩", maxDigits: 10 },
   { name: "Malaysia", code: "+60", flag: "🇲🇾", maxDigits: 10 },
   { name: "Philippines", code: "+63", flag: "🇵🇭", maxDigits: 10 },
-  { name: "Thailand", code: "+66", flag: "🇹🇭", maxDigits: 9 },
   { name: "Poland", code: "+48", flag: "🇵🇱", maxDigits: 9 },
+  { name: "Singapore", code: "+65", flag: "🇸🇬", maxDigits: 8 },
   { name: "Spain", code: "+34", flag: "🇪🇸", maxDigits: 9 },
+  { name: "Thailand", code: "+66", flag: "🇹🇭", maxDigits: 9 },
+  { name: "UAE", code: "+971", flag: "🇦🇪", maxDigits: 9 },
 ];
 
 export default function Signup() {
@@ -186,7 +188,7 @@ useEffect(() => {
                     type="button"
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     disabled={isLoading}
-                    className="flex items-center gap-1.5 bg-input border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all whitespace-nowrap disabled:opacity-50"
+                    className="flex items-center gap-1.5 bg-input border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all whitespace-nowrap disabled:opacity-50"
                   >
                     <span className="text-base">{selectedCountry.flag}</span>
                     <span className="text-white/80 font-medium">{selectedCountry.code}</span>
@@ -203,7 +205,7 @@ useEffect(() => {
                           key={country.code}
                           type="button"
                           onClick={() => handleCountrySelect(country)}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm hover:bg-white/5 transition-colors text-left ${
+                          className={`w-full flex items-center gap-3 px-3 py-1 text-sm hover:bg-white/5 transition-colors text-left ${
                             selectedCountry.code === country.code ? "bg-primary/10 text-primary" : "text-white/80"
                           }`}
                         >
