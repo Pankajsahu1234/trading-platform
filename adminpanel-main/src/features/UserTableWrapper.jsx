@@ -34,8 +34,8 @@ const EditModal = ({ user, onSave, onClose }) => {
             </div>
             <h3 className="text-xl font-black text-slate-800">Edit User</h3>
           </div>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all flex items-center justify-center"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,67 +132,98 @@ export const UserTableWrapper = ({ users, onDelete, onUpdate, loading, error }) 
       )}
 
       {!loading && !error && (
-        <TableWrapper>
-          <thead>
-            <tr>
-              <Th>#</Th>
-              <Th>User Name</Th>
-              <Th>User ID</Th>
-              <Th>Phone</Th>
-              <Th>Total Deposit</Th>
-              <Th>Total Withdrawal</Th>
-              <Th>Rank</Th>
-              <Th className="text-center">Actions</Th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-50">
-            {users.map((user, idx) => (
-              <tr key={user.id} className="group hover:bg-teal-50/20 transition-colors">
-                <Td className="text-slate-400 font-semibold">{idx + 1}</Td>
-                <Td>
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
-                      {/* {user.name.charAt(0)} */}
-
-                      {user.name?.charAt(0) ?? "?"}
-                    </div>
-                    {/* <span className="font-bold text-slate-800">{user.name}</span> */}
-                    <span className="font-bold text-slate-800">{user.name ?? "Unknown"}</span>
-                  </div>
-                </Td>
-                <Td className="font-mono text-[11px] text-slate-500 bg-slate-50/50 rounded-md px-2 py-1 mx-6 inline-block mt-3">
-                  {user.id}
-                </Td>
-                <Td className="text-slate-500 text-sm">{user.phone || <span className="text-slate-300">—</span>}</Td>
-                <Td className="text-emerald-600 font-bold">${(user.totalDeposit || 0).toLocaleString()}</Td>
-                <Td className="text-rose-500 font-bold">${(user.totalWithdrawal || 0).toLocaleString()}</Td>
-                <Td><Badge rank={user.rank} /></Td>
-                <Td className="text-center">
-                  <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                    <button
-                      onClick={() => setEditingUser(user)}
-                      className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all transform hover:scale-110"
-                      title="Edit"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => window.confirm(`Delete ${user.name}?`) && onDelete(user.id)}
-                      className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all transform hover:scale-110"
-                      title="Delete"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </Td>
+        /* Horizontal scroll container so table never breaks layout */
+        <div className="w-full overflow-x-auto">
+          <TableWrapper>
+            <thead>
+              <tr>
+                <Th className="w-8">#</Th>
+                <Th>User Name</Th>
+                {/* UUID column: hidden on small screens, visible from md up */}
+                <Th className="hidden md:table-cell">User ID</Th>
+                <Th>Phone</Th>
+                <Th>Deposit</Th>
+                {/* Withdrawal: hidden on small, shown from lg up */}
+                <Th className="hidden lg:table-cell">Withdrawal</Th>
+                <Th className="hidden sm:table-cell">Rank</Th>
+                <Th className="text-center">Actions</Th>
               </tr>
-            ))}
-          </tbody>
-        </TableWrapper>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {users.map((user, idx) => (
+                <tr key={user.id} className="group hover:bg-teal-50/20 transition-colors">
+                  <Td className="text-slate-400 font-semibold text-xs w-8">{idx + 1}</Td>
+
+                  <Td>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 shrink-0 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                        {user.name?.charAt(0) ?? '?'}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-800 text-sm block truncate max-w-[80px] sm:max-w-none">
+                          {user.name ?? 'Unknown'}
+                        </span>
+                        {/* Show truncated UUID below name on small screens */}
+                        <span className="font-mono text-[10px] text-slate-400 md:hidden block truncate max-w-[100px]">
+                          {user.id?.slice(0, 8)}…
+                        </span>
+                      </div>
+                    </div>
+                  </Td>
+
+                  {/* Full UUID — hidden on small screens */}
+                  <Td className="hidden md:table-cell">
+                    <span
+                      className="font-mono text-[11px] text-slate-500 bg-slate-50 border border-slate-100 rounded-md px-2 py-1 block truncate max-w-[160px] lg:max-w-[220px]"
+                      title={user.id}
+                    >
+                      {user.id}
+                    </span>
+                  </Td>
+
+                  <Td className="text-slate-500 text-xs sm:text-sm whitespace-nowrap">
+                    {user.phone || <span className="text-slate-300">—</span>}
+                  </Td>
+
+                  <Td className="text-emerald-600 font-bold text-xs sm:text-sm whitespace-nowrap">
+                    ${(user.total_deposit || 0).toLocaleString()}
+                  </Td>
+
+                  <Td className="hidden lg:table-cell text-rose-500 font-bold text-xs sm:text-sm whitespace-nowrap">
+                    ${(user.total_withdrawal || 0).toLocaleString()}
+                  </Td>
+
+                  <Td className="hidden sm:table-cell">
+                    <Badge rank={user.rank} />
+                  </Td>
+
+                  <Td className="text-center">
+                    <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                      <button
+                        onClick={() => setEditingUser(user)}
+                        className="p-1.5 sm:p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all transform hover:scale-110"
+                        title="Edit"
+                      >
+                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => window.confirm(`Delete ${user.name}?`) && onDelete(user.id)}
+                        className="p-1.5 sm:p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all transform hover:scale-110"
+                        title="Delete"
+                      >
+                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </TableWrapper>
+        </div>
       )}
 
       {editingUser && (

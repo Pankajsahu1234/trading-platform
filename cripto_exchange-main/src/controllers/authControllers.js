@@ -272,6 +272,7 @@ async function login(req, res) {
       accountStatus: user.status, // map if needed
       createdAt: user.created_at, // map if needed
       referralCode: user.referral_code, // map if needed
+      phone: user.phone, // map if needed
     },
   })
 }
@@ -413,6 +414,53 @@ async function refreshToken(req, res) {
     res.json({ token: newToken })
   } catch (error) {
     res.status(403).json({ error: 'Invalid refresh token' })
+  }
+}
+
+ 
+async function changePassword(req, res) {
+  try {
+    const { userId } = req.user; // set by your auth middleware
+    const { currentPassword, newPassword } = req.body;
+ 
+    // ── 1. Basic input validation ────────────────────────────────────────────
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required.' });
+    }
+ 
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters.' });
+    }
+ 
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ error: 'New password must be different from your current password.' });
+    }
+ 
+    // ── 2. Fetch user from DB ────────────────────────────────────────────────
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+ 
+    // ── 3. Verify current password against stored hash ───────────────────────
+    const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Current password is incorrect.' });
+    }
+ 
+    // ── 4. Hash new password and update ─────────────────────────────────────
+    const newHash = await bcrypt.hash(newPassword, 10);
+ 
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password_hash: newHash },
+    });
+ 
+    return res.json({ message: 'Password changed successfully.' });
+ 
+  } catch (error) {
+    console.error('Change password error:', error);
+    return res.status(500).json({ error: 'Failed to change password. Please try again.' });
   }
 }
 async function regenerateTransactionCode(req, res) {
@@ -579,6 +627,7 @@ export {
   enable2FA,
   confirmEnable2FA,
   refreshToken,
+  changePassword,
   regenerateTransactionCode,
   sendOTPEmailForTxCode
 }

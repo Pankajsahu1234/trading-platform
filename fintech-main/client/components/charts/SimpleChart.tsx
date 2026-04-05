@@ -45,8 +45,8 @@ export function SimpleChart({
 
   // Chart dimensions
   const chartWidth = 1000;
-  const chartHeight = 350;
-  const chartPadding = { top: 20, right: 20, bottom: 50, left: 60 };
+  const chartHeight = 380;
+  const chartPadding = { top: 20, right: 20, bottom: 20, left: 60 };
 
   // Calculate points
   const points = data.map((d, i) => {
@@ -151,11 +151,12 @@ const isPositive = true; // since these are fixed increments
 </div>
 
       {/* Chart */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative overflow-hidden">
         <svg 
           className="w-full h-full" 
           viewBox={`0 0 ${chartWidth} ${chartHeight}`}
           style={{ overflow: 'visible' }}
+          preserveAspectRatio="none"
         >
           {/* Gradient definitions */}
           <defs>
@@ -194,7 +195,7 @@ const isPositive = true; // since these are fixed increments
               textAnchor="end"
               dominantBaseline="middle"
               fill="rgba(255,255,255,0.5)"
-              fontSize="11"
+              fontSize="15"
               fontWeight="500"
             >
               {formatPrice(label.value)}
@@ -291,7 +292,7 @@ const isPositive = true; // since these are fixed increments
               y={chartHeight - chartPadding.bottom + 20}
               textAnchor="middle"
               fill="rgba(255,255,255,0.5)"
-              fontSize="10"
+              fontSize="15"
               fontWeight="500"
             >
               {point.time}

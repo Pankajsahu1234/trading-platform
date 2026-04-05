@@ -103,40 +103,49 @@
   }
 
   /* Light mode - Professional Gold Trading Theme */
-  html.light-mode {
-    --background: 210 20% 98%;        /* Soft light background */
-    --foreground: 222 47% 11%;        /* Deep slate text #0F172A for high contrast */
-    --card: 0 0% 100%;                /* Pure white cards #FFFFFF */
-    --card-foreground: 222 47% 11%;   /* Deep slate text */
-    --popover: 0 0% 100%;             /* White popover */
-    --popover-foreground: 222 47% 11%; /* Deep slate text */
-    --primary: 43 49% 45%;            /* Gold #A8893C */
-    --primary-foreground: 0 0% 100%;  /* White text on gold */
-    --secondary: 40 30% 95%;          /* Light gold-tinted secondary */
-    --secondary-foreground: 222 47% 11%; /* Deep slate text */
-    --muted: 210 20% 96%;             /* Visible muted background */
-    --muted-foreground: 215 20% 40%;  /* Medium-dark gray #475569 / slate-700 */
-    --accent: 43 70% 57%;             /* Gold accent #E2BC6A */
-    --accent-foreground: 222 47% 11%; /* Dark text on accent */
-    --destructive: 0 84.2% 60.2%;     /* Red for errors */
-    --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 85%;            /* More visible borders #E2E8F0 */
-    --input: 210 15% 97%;             /* Slightly tinted input background */
-    --ring: 43 49% 45%;               /* Gold focus ring */
-    --success: 43 49% 45%;            /* Gold for success */
-    --success-foreground: 0 0% 100%;  /* White text */
-    --profit: 43 70% 57%;             /* Bright gold for profit */
-    --loss: 0 84.2% 60.2%;            /* Red for loss */
-    --warning: 45 93% 56%;            /* Amber warning */
-    --sidebar-background: 40 20% 97%; /* Very light gold sidebar */
-    --sidebar-foreground: 222 47% 11%; /* Deep slate text */
-    --sidebar-primary: 43 49% 45%;    /* Gold */
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 30% 95%;     /* Light gold accent */
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 85%;    /* Visible border */
-    --sidebar-ring: 43 49% 45%;       /* Gold focus ring */
-  }
+/* Light mode - Professional Gold Trading Theme */
+html.light-mode {
+  --background: 220 25% 94%;
+  --foreground: 222 35% 12%;
+  --card: 220 20% 98%;
+  --card-foreground: 222 35% 12%;
+  --popover: 220 20% 98%;
+  --popover-foreground: 222 35% 12%;
+  --primary: 43 82% 45%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 20% 88%;
+  --secondary-foreground: 222 35% 12%;
+  --muted: 220 18% 88%;
+  --muted-foreground: 220 15% 42%;
+  --accent: 43 85% 50%;
+  --accent-foreground: 222 35% 12%;
+  --destructive: 0 84% 58%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 18% 75%;              /* darker — clearly visible on white cards */
+  --input: 220 18% 75%;              /* inputs share same border color */
+  --ring: 43 82% 45%;
+  --success: 152 55% 38%;
+  --success-foreground: 0 0% 100%;
+  --profit: 43 85% 45%;
+  --loss: 0 84% 58%;
+  --warning: 38 90% 52%;
+
+  /* ── Sidebar — dark navy, light text ─────────────────────── */
+  --sidebar-background: 222 30% 18%;
+  --sidebar-foreground: 0 0% 92%;         /* near-white — clearly visible */
+  --sidebar-primary: 43 82% 50%;          /* gold active */
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 222 28% 28%;          /* hover state — slightly lighter navy */
+  --sidebar-accent-foreground: 0 0% 96%;  /* bright white text on hover */
+  --sidebar-border: 222 25% 28%;          /* subtle navy border */
+  --sidebar-ring: 43 82% 50%;
+  /*   try grid in backgrond */
+   background-color: hsl(220, 25%, 94%);
+  background-image: 
+    linear-gradient(rgba(30, 50, 120, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 50, 120, 0.15) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
 }
 
 @layer base {
