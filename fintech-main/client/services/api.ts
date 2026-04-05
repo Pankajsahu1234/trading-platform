@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://timo-dev-alb-2026977482.ap-south-1.elb.amazonaws.com/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 class ApiService {
   private instance: AxiosInstance;

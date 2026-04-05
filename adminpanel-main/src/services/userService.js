@@ -1,4 +1,4 @@
-const BASE_URL = "http://timo-dev-alb-2026977482.ap-south-1.elb.amazonaws.com/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const getToken = () => localStorage.getItem('token');
 const authHeaders = () => ({
