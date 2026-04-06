@@ -228,7 +228,7 @@ export default function Referral() {
                               : "bg-warning/20 text-warning"
                           }`}
                         >
-                          {ref.status}
+                        {ref.status.toUpperCase()}
                         </span>
                       </div>
                     </div>

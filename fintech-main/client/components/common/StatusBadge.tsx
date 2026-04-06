@@ -18,7 +18,7 @@ const statusStyles = {
 
 const statusLabels = {
   active: "ACTIVE",
-  inactive: "inactive",
+inactive: "INACTIVE",
   pending: "pending",
   verified: "verified",
   completed: "completed",
