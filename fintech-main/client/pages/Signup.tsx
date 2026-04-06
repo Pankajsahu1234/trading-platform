@@ -123,7 +123,10 @@ useEffect(() => {
       <div className="w-full max-w-md space-y-8 animate-slide-up relative z-10">
         {/* Logo */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-primary">Timofx</h1>
+            <h1 className="text-4xl font-bold">
+              <span className="text-white">Timo</span>
+              <span className="text-primary">FX</span>
+            </h1>
           <p className="text-muted-foreground">Professional I Platform</p>
         </div>
 

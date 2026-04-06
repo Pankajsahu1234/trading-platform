@@ -130,7 +130,7 @@ function TransactionDetailModal({
                       : "bg-loss/20 text-loss"
                   }`}
                 >
-                  {value}
+                  {value?.toLowerCase() === "success" ? "COMPLETED" : value}
                 </span>
               ) : (
                 <p className="text-sm font-medium text-right max-w-[55%] truncate">
@@ -356,7 +356,7 @@ export default function History() {
                               : "bg-loss/20 text-loss"
                           }`}
                         >
-                          {txn.status || "Unknown"}
+                          {txn.status?.toLowerCase() === "success" ? "COMPLETED" : (txn.status || "Unknown")}
                         </span>
                       </td>
                     </tr>
@@ -400,7 +400,7 @@ export default function History() {
                           : "bg-loss/20 text-loss"
                       }`}
                     >
-                      {txn.status || "Unknown"}
+                      {txn.status?.toLowerCase() === "success" ? "COMPLETED" : (txn.status || "Unknown")}
                     </span>
                   </div>
                 </div>
