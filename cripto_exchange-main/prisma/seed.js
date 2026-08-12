@@ -1,6 +1,7 @@
 // prisma/seed.js
 import { PrismaClient } from "@prisma/client";
 import { randomUUID } from "crypto";
+import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
@@ -31,11 +32,14 @@ async function main() {
   await prisma.investmentPlan.upsert({ where: { name: "Diamond Membership" }, update: {}, create: { id: randomUUID(), name: "Diamond Membership", min_amount: 100, max_amount: 999, min_interest: 5, max_interest: 5 } });
   await prisma.investmentPlan.upsert({ where: { name: "Platinum Membership" }, update: {}, create: { id: randomUUID(), name: "Platinum Membership", min_amount: 1000, max_amount: null, min_interest: 7, max_interest: 12 } });
 
+  // Hash password
+  const adminPasswordHash = await bcrypt.hash("changeme", 10);
+
   // ADMIN RECORD (for deposit address)
   await prisma.admin.upsert({
     where: { email: "admin@timofx.com" },
-    update: { depositAddress: "TRRBEAZp1UhHd3W5sKHfpWjxk77WjargVg" },
-    create: { id: randomUUID(), email: "admin@timofx.com", name: "Admin", password_hash: "changeme", depositAddress: "TRRBEAZp1UhHd3W5sKHfpWjxk77WjargVg" }
+    update: { depositAddress: "TRRBEAZp1UhHd3W5sKHfpWjxk77WjargVg", password_hash: adminPasswordHash },
+    create: { id: randomUUID(), email: "admin@timofx.com", name: "Admin", password_hash: adminPasswordHash, depositAddress: "TRRBEAZp1UhHd3W5sKHfpWjxk77WjargVg" }
   });
 
   console.log("✅ Seeding completed.");
